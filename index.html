@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema Digital de Estereopsis Titmus</title>
     <style>
         :root {
@@ -14,29 +14,31 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-body);
             color: #1e293b;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .header-title {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .header-title h1 {
-            font-size: 26px;
+            font-size: 24px;
             margin: 0 0 5px 0;
             color: #0f172a;
         }
 
         .header-title p {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--gray-muted);
             margin: 0;
             text-transform: uppercase;
@@ -49,7 +51,7 @@
             box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
             max-width: 900px;
             width: 100%;
-            padding: 30px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
@@ -57,46 +59,44 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
 
         .test-header h2 {
-            font-size: 20px;
-            margin: 0 0 8px 0;
+            font-size: 18px;
+            margin: 0 0 5px 0;
             color: #1e293b;
         }
 
         .clinical-badge {
             background-color: #fee2e2;
             color: #ef4444;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             padding: 4px 10px;
             border-radius: 6px;
-            white-space: nowrap;
         }
 
         .instructions {
-            font-size: 14px;
+            font-size: 13px;
             color: #64748b;
             line-height: 1.5;
-            margin: 0 0 25px 0;
+            margin: 0 0 20px 0;
         }
 
-        /* Grid de 3x3 para los bloques Wirt */
         .wirt-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .wirt-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 400px) {
             .wirt-grid { grid-template-columns: 1fr; }
         }
 
@@ -104,121 +104,52 @@
             background: var(--card-bg);
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 15px;
+            padding: 10px;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 180px;
-            transition: border-color 0.2s ease;
-        }
-
-        .block-card:hover {
-            border-color: #cbd5e1;
         }
 
         .block-title {
             position: absolute;
-            top: 10px;
-            left: 12px;
-            font-size: 12px;
+            top: 8px;
+            left: 10px;
+            font-size: 11px;
             color: var(--gray-muted);
             font-weight: 700;
         }
 
-        /* Distribución en Diamante de los Círculos */
-        .diamond-layout {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-top: 10px;
-        }
-
-        .circle-wrapper {
-            position: absolute;
-            width: 36px;
-            height: 36px;
-            background: transparent;
-            border-radius: 50%;
+        /* Canvas optimizado para renderizado por hardware sin suavizado */
+        .test-canvas {
+            margin-top: 15px;
             cursor: pointer;
-            box-sizing: border-box;
-            transition: background-color 0.2s;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
-        /* Feedback visual sutil cuando el evaluador o paciente selecciona una opción */
-        .circle-wrapper:hover {
-            background-color: #f1f5f9;
-        }
-
-        .circle-wrapper.selected {
-            background-color: #e2e8f0;
-            box-shadow: 0 0 0 2px #94a3b8;
-        }
-
-        /* Posiciones absolutas del diamante */
-        .circle-wrapper.top    { top: 2px; left: 50%; transform: translateX(-50%); }
-        .circle-wrapper.left   { top: 50%; left: 2px; transform: translateY(-50%); }
-        .circle-wrapper.right  { top: 50%; right: 2px; transform: translateY(-50%); }
-        .circle-wrapper.bottom { bottom: 2px; left: 50%; transform: translateX(-50%); }
-
-        /* Capas Anaglifas Ópticas Corregidas */
-        .anaglyph-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 3.5px solid;
-            border-radius: 50%;
-            background: transparent !important; /* Evita que se rellene de negro */
-            mix-blend-mode: multiply; /* Fusión perfecta para fondos blancos */
-            box-sizing: border-box;
-            pointer-events: none; /* Permite hacer clic al wrapper de abajo */
-        }
-
-        /* Colores puros para máxima extinción con filtros */
-        .anaglyph-layer.red {
-            border-color: #ff0000;
-        }
-
-        .anaglyph-layer.cyan {
-            border-color: #00ffff;
-        }
-
-        /* Botonera Principal */
         .actions-footer {
             display: flex;
             justify-content: space-between;
             gap: 15px;
-            margin-top: 10px;
         }
 
         .btn {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
         }
 
-        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background-color: #64748b; color: white; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
 
-        .btn-secondary {
-            background-color: #64748b;
-            color: white;
-        }
-        .btn-secondary:hover { background-color: #475569; }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-
-        /* Modal Clínico de Calibración */
+        /* Modal de Calibración */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -229,92 +160,62 @@
             z-index: 1000;
             visibility: hidden;
             opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.2s ease;
         }
 
-        .modal-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .modal-card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        .calibration-line {
-            height: 8px;
-            background-color: #3b82f6;
-            margin: 25px 0;
-            border-radius: 4px;
-            width: 323.5px; /* Valor inicial por defecto */
-        }
-
-        .slider-control {
-            width: 100%;
-            margin: 15px 0;
-        }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-card { background: white; padding: 20px; border-radius: 16px; max-width: 450px; width: 100%; margin: 15px; }
+        .calibration-line { height: 8px; background-color: #3b82f6; margin: 20px 0; border-radius: 4px; }
+        .slider-control { width: 100%; margin: 15px 0; }
     </style>
 </head>
 <body>
 
     <div class="header-title">
         <h1>Sistema Digital de Estereopsis Titmus</h1>
-        <p>Software Clínico Calibrado por Píxel Real</p>
+        <p>Motor de Renderizado Canónico por Píxel Físico</p>
     </div>
 
     <div class="test-container">
         <div class="test-header">
-            <div>
-                <h2>Paso 2: Sub-test de Círculos (Wirt)</h2>
-            </div>
-            <span class="clinical-badge">Distancia clínica: 40 cm</span>
+            <div><h2>Paso 2: Sub-test de Círculos (Wirt)</h2></div>
+            <span class="clinical-badge">Distancia: 40 cm</span>
         </div>
         
         <p class="instructions">
-            Coloque los <strong>lentes anaglifos (Rojo/Cian)</strong> al paciente. Pídale que examine cada bloque ordenadamente (del 1 al 9) e identifique cuál de los 4 círculos parece "flotar" o salir de la pantalla hacia él. Haga clic en el círculo correspondiente para registrar la respuesta del paciente.
+            Con los <strong>lentes anaglifos</strong> puestos, el paciente debe indicar qué círculo (Arriba, Abajo, Izquierda o Derecha) sobresale en relieve. Toque directamente el círculo seleccionado para registrarlo.
         </p>
 
         <div class="wirt-grid" id="wirtGrid"></div>
 
         <div class="actions-footer">
-            <button class="btn btn-secondary" onclick="openCalibration()">Recalibrar Pantalla</button>
-            <button class="btn btn-primary" onclick="finishTest()">Finalizar y Ver Reporte</button>
+            <button class="btn btn-secondary" onclick="openCalibration()">Calibrar Pantalla</button>
+            <button class="btn btn-primary" onclick="finishTest()">Ver Reporte</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="calibrationModal">
         <div class="modal-card">
-            <h3>Calibración Fisiológica de la Pantalla</h3>
+            <h3>Calibración de Densidad de Pantalla</h3>
             <p style="font-size: 13px; color: #64748b;">
-                Coloque una tarjeta plástica física (RUT, Licencia o Tarjeta de Crédito) directamente sobre la pantalla. Ajuste el deslizador inferior hasta que la barra azul coincida exactamente con el ancho de su tarjeta real (85.6 mm).
+                Ajuste el deslizador hasta que la línea coincida exactamente con el ancho de una tarjeta plástica física (85.6 mm) apoyada sobre la pantalla.
             </p>
-            
             <div style="display: flex; justify-content: center;">
-                <div class="calibration-line" id="calLine"></div>
+                <div class="calibration-line" id="calLine" style="width: 323px;"></div>
             </div>
-
             <input type="range" min="150" max="600" value="323" class="slider-control" id="calSlider" oninput="updatePixelPitch(this.value)">
-            
             <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
-                <span>Resolución Ajustada</span>
+                <span>Densidad CSS Calculada</span>
                 <span id="pxValue">3.78 px/mm</span>
             </div>
-
-            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="closeCalibration()">Guardar y Aplicar Calibración</button>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="closeCalibration()">Aplicar</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN CLÍNICA BASE ---
-        const CLINICAL_DISTANCE_MM = 400; // 40 cm de distancia de examen
-        let pixelsPerMm = 3.78; // Valor por defecto (Estándar 96 DPI)
+        const CLINICAL_DISTANCE_MM = 400;
+        let pixelsPerMmCss = 3.78; // Medido en píxeles lógicos (CSS)
 
-        // Matriz oficial del test Titmus original (Secuencia exacta de respuestas correctas)
         const testBlocks = [
             { id: 1, arcseconds: 800, correct: 'bottom' },
             { id: 2, arcseconds: 400, correct: 'left' },
@@ -327,151 +228,172 @@
             { id: 9, arcseconds: 40,  correct: 'top' }
         ];
 
-        // Registro de respuestas ingresadas del paciente
         let patientAnswers = {};
 
-        // --- CÁLCULO TRIGONOMÉTRICO DE DISPARIDAD (ANAGLIFO) ---
-        function calculateDisplacementPx(arcseconds) {
-            // Conversión de segundos de arco a radianes: arcsec * (pi / (180 * 3600))
-            const radians = arcseconds * (Math.PI / 648000);
-            
-            // Disparidad lineal requerida en la superficie de la pantalla (mm)
-            const disparityMm = CLINICAL_DISTANCE_MM * radians;
-            
-            // Conversión a píxeles físicos según la calibración de la pantalla actual
-            const totalDisparityPx = disparityMm * pixelsPerMm;
-            
-            // Retorna el desplazamiento individual para cada ojo (mitad del total)
-            return totalDisparityPx / 2;
-        }
-
-        // --- GENERADOR INTERACTIVO DE LA INTERFAZ ---
-        function renderTest() {
+        function buildGrid() {
             const gridContainer = document.getElementById('wirtGrid');
-            gridContainer.innerHTML = ''; // Limpiar render previo
+            gridContainer.innerHTML = '';
 
-            testBlocks.forEach((block, index) => {
-                const shift = calculateDisplacementPx(block.arcseconds);
-                const positions = ['top', 'left', 'right', 'bottom'];
-                
-                // Crear tarjeta del bloque
+            testBlocks.forEach(block => {
                 const card = document.createElement('div');
                 card.className = 'block-card';
-                
-                // Título indicador superior izquierdo
+
                 const title = document.createElement('div');
                 title.className = 'block-title';
                 title.innerText = `${block.id} (${block.arcseconds}")`;
                 card.appendChild(title);
 
-                // Contenedor en forma de diamante
-                const diamond = document.createElement('div');
-                diamond.className = 'diamond-layout';
+                // Crear elemento Canvas
+                const canvas = document.createElement('canvas');
+                canvas.id = `canvas-${block.id}`;
+                canvas.className = 'test-canvas';
+                card.appendChild(canvas);
 
-                // Generar los 4 círculos
-                positions.forEach(pos => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = `circle-wrapper ${pos}`;
-                    
-                    // Si ya estaba seleccionado previamente, mantenemos su estado visual
-                    if (patientAnswers[block.id] === pos) {
-                        wrapper.classList.add('selected');
+                // Manejo de clicks basado en coordenadas geométricas locales
+                canvas.onclick = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const clickY = e.clientY - rect.top;
+
+                    // Centros teóricos de los 4 círculos en el espacio CSS (120x120)
+                    const cx = 60; const cy = 60; const dist = 36;
+                    const points = {
+                        top:    { x: cx,        y: cy - dist },
+                        left:   { x: cx - dist, y: cy },
+                        right:  { x: cx + dist, y: cy },
+                        bottom: { x: cx,        y: cy + dist }
+                    };
+
+                    let targetPos = null;
+                    let minDist = 99999;
+
+                    for (let pos in points) {
+                        const d = Math.hypot(clickX - points[pos].x, clickY - points[pos].y);
+                        if (d < minDist) {
+                            minDist = d;
+                            targetPos = pos;
+                        }
                     }
 
-                    // Determinar si este círculo específico es el portador de la disparidad
-                    const isTarget = (pos === block.correct);
-                    const currentShift = isTarget ? shift : 0;
+                    if (minDist < 24) { // Umbral de tolerancia de click
+                        if (patientAnswers[block.id] === targetPos) {
+                            delete patientAnswers[block.id];
+                        } else {
+                            patientAnswers[block.id] = targetPos;
+                        }
+                        drawBlock(block);
+                    }
+                };
 
-                    // Capas gemelas transparentes con mix-blend-mode: multiply
-                    // Para efecto de flotación (Crossed Disparity) con gafa convencional:
-                    // Ojo Izq (Filtro Rojo) ve capa Cian -> Desplaza a la Derecha (+currentShift)
-                    // Ojo Der (Filtro Cian) ve capa Roja -> Desplaza a la Izquierda (-currentShift)
-                    wrapper.innerHTML = `
-                        <div class="anaglyph-layer red" style="transform: translateX(${-currentShift}px);"></div>
-                        <div class="anaglyph-layer cyan" style="transform: translateX(${currentShift}px);"></div>
-                    `;
-
-                    // Guardar la selección del paciente al hacer clic
-                    wrapper.onclick = () => selectCircle(block.id, pos, card);
-                    diamond.appendChild(wrapper);
-                });
-
-                card.appendChild(diamond);
                 gridContainer.appendChild(card);
+                drawBlock(block);
             });
         }
 
-        // --- LÓGICA DE CONTROL CLÍNICO Y RESPUESTAS ---
-        function selectCircle(blockId, position, cardElement) {
-            // Remover selección previa en este bloque específico
-            const selectedInBlock = cardElement.querySelectorAll('.circle-wrapper');
-            selectedInBlock.forEach(el => el.classList.remove('selected'));
+        function drawBlock(block) {
+            const canvas = document.getElementById(`canvas-${block.id}`);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Factor de escala de hardware real del dispositivo (DPR)
+            const dpr = window.devicePixelRatio || 1;
+            const sizeCss = 120;
 
-            // Guardar o cambiar la respuesta del paciente
-            if (patientAnswers[blockId] === position) {
-                delete patientAnswers[blockId]; // Si hace clic de nuevo, deselecciona
-            } else {
-                patientAnswers[blockId] = position;
-                // Aplicar clase visual seleccionada
-                const clickedWrapper = cardElement.querySelector(`.circle-wrapper.${position}`);
-                clickedWrapper.classList.add('selected');
+            // Ajustar tamaño del buffer del canvas a píxeles FÍSICOS reales de pantalla
+            canvas.width = sizeCss * dpr;
+            canvas.height = sizeCss * dpr;
+            canvas.style.width = `${sizeCss}px`;
+            canvas.style.height = `${sizeCss}px`;
+
+            // Rellenar fondo blanco sólido (mandatorio para fusión "multiply")
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Coordenadas físicas internas
+            const cx = 60 * dpr;
+            const cy = 60 * dpr;
+            const dist = 36 * dpr;
+            const radius = 16 * dpr;
+            const lineWidth = 3 * dpr;
+
+            const positions = {
+                top:    { x: cx,        y: cy - dist },
+                left:   { x: cx - dist, y: cy },
+                right:  { x: cx + dist, y: cy },
+                bottom: { x: cx,        y: cy + dist }
+            };
+
+            // 1. Si el bloque está respondido, dibujar anillo gris de selección en modo estándar
+            const selected = patientAnswers[block.id];
+            if (selected && positions[selected]) {
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 1.5 * dpr;
+                ctx.beginPath();
+                ctx.arc(positions[selected].x, positions[selected].y, radius + 6 * dpr, 0, 2 * Math.PI);
+                ctx.stroke();
             }
+
+            // --- MÓDULO MATEMÁTICO CLÍNICO ---
+            const radians = block.arcseconds * (Math.PI / 648000);
+            const disparityMm = CLINICAL_DISTANCE_MM * radians;
+            
+            // Densidad en píxeles de hardware por milímetro
+            const physicalPixelsPerMm = pixelsPerMmCss * dpr;
+            
+            // Forzar el desplazamiento total a una unidad entera de píxeles físicos
+            const totalPhysicalShift = Math.round(disparityMm * physicalPixelsPerMm);
+
+            // 2. CAPA ROJA (Estática)
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = lineWidth;
+            for (let pos in positions) {
+                ctx.beginPath();
+                ctx.arc(positions[pos].x, positions[pos].y, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            // 3. CAPA CIAN (Desplazada por hardware absoluto únicamente en el círculo diana)
+            ctx.globalCompositeOperation = 'multiply'; // Fusión sub-píxel perfecta
+            ctx.strokeStyle = '#00ffff';
+            for (let pos in positions) {
+                const isTarget = (pos === block.correct);
+                // Si es el círculo diana, aplicamos el salto exacto de píxeles físicos enteros
+                const shift = isTarget ? totalPhysicalShift : 0;
+
+                ctx.beginPath();
+                ctx.arc(positions[pos].x + shift, positions[pos].y, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            // Restaurar contexto
+            ctx.globalCompositeOperation = 'source-over';
         }
 
-        // --- MÓDULO DE RECALIBRACIÓN EN PANTALLA ---
-        function openCalibration() {
-            document.getElementById('calibrationModal').classList.add('active');
-        }
-
+        function openCalibration() { document.getElementById('calibrationModal').classList.add('active'); }
         function closeCalibration() {
             document.getElementById('calibrationModal').classList.remove('active');
-            renderTest(); // Re-renderizar el test completo recalculando los píxeles reales
+            buildGrid(); // Redibujar todos los canvas recalculando la nueva densidad
         }
 
-        function updatePixelPitch(sliderValue) {
-            const line = document.getElementById('calLine');
-            const pxLabel = document.getElementById('pxValue');
-            
-            // Actualizar ancho visual de la línea azul en base al slider
-            line.style.width = `${sliderValue}px`;
-            
-            // Ajustar la conversión: Tarjeta de crédito estándar mide exactamente 85.6 mm
-            pixelsPerMm = (sliderValue / 85.6);
-            
-            pxLabel.innerText = `${pixelsPerMm.toFixed(2)} px/mm`;
+        function updatePixelPitch(val) {
+            document.getElementById('calLine').style.width = `${val}px`;
+            pixelsPerMmCss = val / 85.6;
+            document.getElementById('pxValue').innerText = `${pixelsPerMmCss.toFixed(2)} px/mm`;
         }
 
         function finishTest() {
-            let correctCount = 0;
-            let reportDetails = "";
-
-            testBlocks.forEach(block => {
-                const answer = patientAnswers[block.id];
-                const isCorrect = (answer === block.correct);
-                if (isCorrect) correctCount++;
-                
-                reportDetails += `Bloque ${block.id} (${block.arcseconds}"): ${answer ? `Seleccionó ${answer.toUpperCase()} (${isCorrect ? 'CORRECTO' : 'INCORRECTO'})` : 'No respondido'}\n`;
+            let correct = 0;
+            let report = "";
+            testBlocks.forEach(b => {
+                const ans = patientAnswers[b.id];
+                const isCorrect = (ans === b.correct);
+                if (isCorrect) correct++;
+                report += `Bloque ${b.id}: ${ans ? `${ans.toUpperCase()} (${isCorrect?'Acierto':'Fallo'})` : 'No respondido'}\n`;
             });
-
-            // Determinar agudeza visual estereoscópica aproximada
-            let stereoAcnuity = "No detectable";
-            for (let i = testBlocks.length - 1; i >= 0; i--) {
-                if (patientAnswers[testBlocks[i].id] === testBlocks[i].correct) {
-                    stereoAcnuity = `${testBlocks[i].arcseconds} segundos de arco`;
-                    break;
-                }
-            }
-
-            alert(`--- REPORTE CLÍNICO DE ESTEREOPSIS ---\n\n` +
-                  `Respuestas acertadas: ${correctCount} de 9\n` +
-                  `Agudeza Estereoscópica Alcanzada: ${stereoAcnuity}\n\n` +
-                  `Detalles:\n${reportDetails}`);
+            alert(`Resultados: ${correct} / 9 aciertos.\n\nDetalle:\n${report}`);
         }
 
-        // Ejecutar primer renderizado al cargar el documento
-        window.onload = () => {
-            renderTest();
-        };
+        window.onload = buildGrid;
     </script>
 </body>
 </html>
