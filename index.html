@@ -3,617 +3,475 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titmus Stereo Test - Digital & Calibrado</title>
+    <title>Sistema Digital de Estereopsis Titmus</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --bg-light: #f8f9fa;
+            --primary-color: #22c55e;
+            --primary-hover: #16a34a;
+            --gray-muted: #94a3b8;
+            --bg-body: #f8fafc;
             --card-bg: #ffffff;
-            --text: #333333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-body);
+            color: #1e293b;
+            margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
         }
 
-        header {
+        .header-title {
             text-align: center;
             margin-bottom: 25px;
         }
 
-        header h1 {
-            color: var(--primary);
-            font-size: 28px;
-            margin-bottom: 5px;
+        .header-title h1 {
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            color: #0f172a;
         }
 
-        header p {
-            color: #666;
+        .header-title p {
             font-size: 14px;
+            color: var(--gray-muted);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .flow-container {
+        .test-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+            max-width: 900px;
             width: 100%;
-            max-width: 800px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        .step-panel {
-            display: none;
-        }
-
-        .step-panel.active {
-            display: block;
-        }
-
-        .description {
-            margin-bottom: 15px;
-            color: #555;
-            line-height: 1.5;
-        }
-
-        .calibration-box {
-            border: 2px dashed #bdc3c7;
-            border-radius: 8px;
-            margin: 20px auto;
-            position: relative;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            width: 323px; 
-            height: 204px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #7f8c8d;
-        }
-
-        .calibration-card-chip {
-            position: absolute;
-            top: 40px;
-            left: 30px;
-            width: 45px;
-            height: 35px;
-            background: #f1c40f;
-            border-radius: 5px;
-            opacity: 0.7;
-        }
-
-        #pixel-width-display {
-            font-size: 11px;
-            margin-top: 5px;
-        }
-
-        .slider-container {
-            margin: 25px 0;
-            text-align: center;
-        }
-
-        .slider-container label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .slider-container input {
-            width: 80%;
-            max-width: 400px;
-            margin: 10px 0;
-            accent-color: var(--accent);
+            box-sizing: border-box;
         }
 
         .test-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 15px;
         }
 
-        #distance-notice {
-            font-weight: bold;
-            color: var(--danger);
-            background: #fef2f2;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 13px;
+        .test-header h2 {
+            font-size: 20px;
+            margin: 0 0 8px 0;
+            color: #1e293b;
         }
 
-        .test-grid-wirt {
+        .clinical-badge {
+            background-color: #fee2e2;
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .instructions {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.5;
+            margin: 0 0 25px 0;
+        }
+
+        /* Grid de 3x3 para los bloques Wirt */
+        .wirt-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            margin-top: 20px;
+            margin-bottom: 30px;
         }
 
-        @media (max-width: 600px) {
-            .test-grid-wirt { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 768px) {
+            .wirt-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .wirt-grid { grid-template-columns: 1fr; }
         }
 
-        .wirt-box {
-            background: #fff;
+        .block-card {
+            background: var(--card-bg);
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 15px;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 160px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            min-height: 180px;
+            transition: border-color 0.2s ease;
         }
 
-        .wirt-box:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .wirt-box.completed {
-            background-color: #fafbfc;
+        .block-card:hover {
             border-color: #cbd5e1;
         }
 
-        .wirt-box-title {
+        .block-title {
             position: absolute;
-            top: 5px;
-            left: 8px;
+            top: 10px;
+            left: 12px;
             font-size: 12px;
-            font-weight: bold;
-            color: #94a3b8;
+            color: var(--gray-muted);
+            font-weight: 700;
         }
 
-        .circle-group {
+        /* Distribución en Diamante de los Círculos */
+        .diamond-layout {
             position: relative;
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
+            margin-top: 10px;
         }
 
-        .base-circle {
+        .circle-wrapper {
             position: absolute;
-            width: 32px;
-            height: 32px;
-            border: 3px solid #1e293b;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
             background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
         }
 
-        .pos-top    { top: 2px; left: 39px; }
-        .pos-bottom { bottom: 2px; left: 39px; }
-        .pos-left   { top: 39px; left: 2px; }
-        .pos-right  { top: 39px; right: 2px; }
-
-        .anaglyph-container {
-            position: absolute;
-            width: 32px;
-            height: 32px;
+        /* Feedback visual sutil cuando el evaluador o paciente selecciona una opción */
+        .circle-wrapper:hover {
+            background-color: #f1f5f9;
         }
 
-        .anaglyph-left {
+        .circle-wrapper.selected {
+            background-color: #e2e8f0;
+            box-shadow: 0 0 0 2px #94a3b8;
+        }
+
+        /* Posiciones absolutas del diamante */
+        .circle-wrapper.top    { top: 2px; left: 50%; transform: translateX(-50%); }
+        .circle-wrapper.left   { top: 50%; left: 2px; transform: translateY(-50%); }
+        .circle-wrapper.right  { top: 50%; right: 2px; transform: translateY(-50%); }
+        .circle-wrapper.bottom { bottom: 2px; left: 50%; transform: translateX(-50%); }
+
+        /* Capas Anaglifas Ópticas Corregidas */
+        .anaglyph-layer {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            border: 3px solid #ff0000;
+            border: 3.5px solid;
             border-radius: 50%;
-            mix-blend-mode: screen;
+            background: transparent !important; /* Evita que se rellene de negro */
+            mix-blend-mode: multiply; /* Fusión perfecta para fondos blancos */
+            box-sizing: border-box;
+            pointer-events: none; /* Permite hacer clic al wrapper de abajo */
         }
 
-        .anaglyph-right {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 3px solid #00ffff;
-            border-radius: 50%;
-            mix-blend-mode: screen;
+        /* Colores puros para máxima extinción con filtros */
+        .anaglyph-layer.red {
+            border-color: #ff0000;
         }
 
-        .anaglyph-blend-zone {
-            background: #000000;
-            border-radius: 50%;
-            width: 100%;
-            height: 100%;
+        .anaglyph-layer.cyan {
+            border-color: #00ffff;
+        }
+
+        /* Botonera Principal */
+        .actions-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
         }
 
         .btn {
-            background-color: var(--accent);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: inline-block;
-        }
-
-        .btn:hover { background-color: #2980b9; }
-        .btn-success { background-color: var(--success); }
-        .btn-success:hover { background-color: #27ae60; }
-        .btn-secondary { background-color: #7f8c8d; }
-        .btn-secondary:hover { background-color: #6c7a7d; }
-
-        .btn-container { margin-top: 15px; }
-        .btn-controls-group {
-            text-align: center;
-            margin-top: 25px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .alert-info {
-            background-color: #e8f4fd;
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
             font-size: 14px;
-            line-height: 1.5;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        .btn:active { transform: scale(0.98); }
+
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
         }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
+        .btn-secondary:hover { background-color: #475569; }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        /* Modal Clínico de Calibración */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-card {
             background: white;
             padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .modal-content p {
-            margin-top: 5px;
-            color: #666;
-            font-size: 14px;
-        }
-        .btn-group-answers {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        .btn-ans {
-            padding: 15px;
-            font-weight: bold;
-            border: 2px solid #cbd5e1;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-ans:hover {
-            background: var(--bg-light);
-            border-color: var(--accent);
-        }
-        .btn-cancel {
-            background: #e2e8f0;
-            color: #333;
-            margin-top: 15px;
+            border-radius: 16px;
+            max-width: 500px;
             width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        .btn-cancel:hover { background: #cbd5e1; }
 
-        .report-card {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 25px;
-            margin-bottom: 15px;
+        .calibration-line {
+            height: 8px;
+            background-color: #3b82f6;
+            margin: 25px 0;
+            border-radius: 4px;
+            width: 323.5px; /* Valor inicial por defecto */
         }
-        .report-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .report-item:last-child { border-bottom: none; }
-        .score-badge {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--success);
-            text-align: center;
+
+        .slider-control {
+            width: 100%;
             margin: 15px 0;
         }
     </style>
 </head>
 <body>
 
-    <header>
+    <div class="header-title">
         <h1>Sistema Digital de Estereopsis Titmus</h1>
         <p>Software Clínico Calibrado por Píxel Real</p>
-    </header>
-
-    <div class="flow-container">
-        
-        <div id="step-calibration" class="step-panel active">
-            <h2>Paso 1: Calibración del Tamaño de Píxel</h2>
-            <p class="description">
-                Para garantizar que los segundos de arco (") sean clínicamente exactos, necesitamos conocer la densidad de píxeles de tu pantalla.
-            </p>
-            <div class="alert-info">
-                <strong>¿Cómo calibrar?</strong> Toma una tarjeta de crédito, débito o credencial física (todas tienen el estándar internacional de 85.6 mm de ancho) y colócala directamente sobre la pantalla. Ajusta el control deslizante de abajo hasta que el cuadro gris tenga <strong>exactamente el mismo tamaño</strong> que tu tarjeta física.
-            </div>
-
-            <div id="calibration-card" class="calibration-box">
-                <div class="calibration-card-chip"></div>
-                <span>Coloca tu tarjeta física aquí</span>
-                <span id="pixel-width-display">Ancho: 323px</span>
-            </div>
-
-            <div class="slider-container">
-                <label for="scale-slider">Ajustar tamaño de la tarjeta:</label>
-                <input type="range" id="scale-slider" min="150" max="600" value="323">
-                <div class="btn-container">
-                    <button class="btn btn-success" onclick="saveCalibration()">Confirmar Calibración y Comenzar Test</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="step-test" class="step-panel">
-            <div class="test-header">
-                <h2>Paso 2: Sub-test de Círculos (Wirt)</h2>
-                <span id="distance-notice">Distancia clínica: 40 cm</span>
-            </div>
-            <p class="description">
-                Coloque los <strong>lentes anaglifos (Rojo/Cian)</strong> al paciente. Pídale que examine cada bloque ordenadamente (del 1 al 9) e identifique cuál de los 4 círculos parece "flotar" o salir de la pantalla hacia él. Haga clic en el bloque para ingresar la respuesta.
-            </p>
-
-            <div class="test-grid-wirt" id="wirt-grid"></div>
-
-            <div class="btn-controls-group">
-                <button class="btn btn-secondary" onclick="backToCalibration()">Recalibrar Pantalla</button>
-                <button class="btn btn-success" onclick="calculateResults()">Finalizar y Ver Reporte</button>
-            </div>
-        </div>
-
-        <div id="step-results" class="step-panel">
-            <h2>Resultados del Examen de Estereopsis</h2>
-            <p class="description">Informe clínico generado de forma automatizada basado en la disparidad angular calculada a 40 cm.</p>
-            
-            <div class="report-card">
-                <div class="score-badge" id="clinical-score">-- arcsec</div>
-                
-                <div class="report-item">
-                    <strong>Paciente:</strong>
-                    <span>Evaluación General</span>
-                </div>
-                <div class="report-item">
-                    <strong>Último Bloque Correcto:</strong>
-                    <span id="rep-last-block">-</span>
-                </div>
-                <div class="report-item">
-                    <strong>Agudeza Estereoscópica Fina:</strong>
-                    <span id="rep-seconds">-</span>
-                </div>
-                <div class="report-item">
-                    <strong>Clasificación Clínica:</strong>
-                    <span id="rep-classification">-</span>
-                </div>
-                <div class="report-item">
-                    <strong>Calibración del Sistema (PPMM):</strong>
-                    <span id="rep-ppmm">- px/mm</span>
-                </div>
-            </div>
-
-            <div class="btn-container">
-                <button class="btn" onclick="restartTest()">Realizar nuevo test</button>
-            </div>
-        </div>
-
     </div>
 
-    <div id="answer-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="modal-title">Bloque X</h3>
-            <p>¿Cuál de los círculos seleccionó el paciente como flotante?</p>
-            
-            <div class="btn-group-answers">
-                <button class="btn-ans" onclick="submitAnswer('Arriba')">⬆️ Arriba</button>
-                <button class="btn-ans" onclick="submitAnswer('Abajo')">⬇️ Abajo</button>
-                <button class="btn-ans" onclick="submitAnswer('Izquierda')">⬅️ Izquierda</button>
-                <button class="btn-ans" onclick="submitAnswer('Derecha')">➡️ Derecha</button>
+    <div class="test-container">
+        <div class="test-header">
+            <div>
+                <h2>Paso 2: Sub-test de Círculos (Wirt)</h2>
             </div>
-            <button class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+            <span class="clinical-badge">Distancia clínica: 40 cm</span>
+        </div>
+        
+        <p class="instructions">
+            Coloque los <strong>lentes anaglifos (Rojo/Cian)</strong> al paciente. Pídale que examine cada bloque ordenadamente (del 1 al 9) e identifique cuál de los 4 círculos parece "flotar" o salir de la pantalla hacia él. Haga clic en el círculo correspondiente para registrar la respuesta del paciente.
+        </p>
+
+        <div class="wirt-grid" id="wirtGrid"></div>
+
+        <div class="actions-footer">
+            <button class="btn btn-secondary" onclick="openCalibration()">Recalibrar Pantalla</button>
+            <button class="btn btn-primary" onclick="finishTest()">Finalizar y Ver Reporte</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="calibrationModal">
+        <div class="modal-card">
+            <h3>Calibración Fisiológica de la Pantalla</h3>
+            <p style="font-size: 13px; color: #64748b;">
+                Coloque una tarjeta plástica física (RUT, Licencia o Tarjeta de Crédito) directamente sobre la pantalla. Ajuste el deslizador inferior hasta que la barra azul coincida exactamente con el ancho de su tarjeta real (85.6 mm).
+            </p>
+            
+            <div style="display: flex; justify-content: center;">
+                <div class="calibration-line" id="calLine"></div>
+            </div>
+
+            <input type="range" min="150" max="600" value="323" class="slider-control" id="calSlider" oninput="updatePixelPitch(this.value)">
+            
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
+                <span>Resolución Ajustada</span>
+                <span id="pxValue">3.78 px/mm</span>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="closeCalibration()">Guardar y Aplicar Calibración</button>
         </div>
     </div>
 
     <script>
-        const titmusSpecs = [
-            { id: 1, arcsec: 800, correct: 'Abajo' },
-            { id: 2, arcsec: 400, correct: 'Izquierda' },
-            { id: 3, arcsec: 200, correct: 'Abajo' },
-            { id: 4, arcsec: 140, correct: 'Arriba' },
-            { id: 5, arcsec: 100, correct: 'Arriba' },
-            { id: 6, arcsec: 80,  correct: 'Izquierda' },
-            { id: 7, arcsec: 60,  correct: 'Derecha' },
-            { id: 8, arcsec: 50,  correct: 'Izquierda' },
-            { id: 9, arcsec: 40,  correct: 'Arriba' }
+        // --- CONFIGURACIÓN CLÍNICA BASE ---
+        const CLINICAL_DISTANCE_MM = 400; // 40 cm de distancia de examen
+        let pixelsPerMm = 3.78; // Valor por defecto (Estándar 96 DPI)
+
+        // Matriz oficial del test Titmus original (Secuencia exacta de respuestas correctas)
+        const testBlocks = [
+            { id: 1, arcseconds: 800, correct: 'bottom' },
+            { id: 2, arcseconds: 400, correct: 'left' },
+            { id: 3, arcseconds: 200, correct: 'bottom' },
+            { id: 4, arcseconds: 140, correct: 'top' },
+            { id: 5, arcseconds: 100, correct: 'top' },
+            { id: 6, arcseconds: 80,  correct: 'left' },
+            { id: 7, arcseconds: 60,  correct: 'right' },
+            { id: 8, arcseconds: 50,  correct: 'left' },
+            { id: 9, arcseconds: 40,  correct: 'top' }
         ];
 
-        let pixelsPerMm = 3.77; 
-        let selectedBlockId = null;
-        let patientAnswers = {}; 
+        // Registro de respuestas ingresadas del paciente
+        let patientAnswers = {};
 
-        const slider = document.getElementById('scale-slider');
-        const calCard = document.getElementById('calibration-card');
-        const pxDisplay = document.getElementById('pixel-width-display');
-
-        slider.addEventListener('input', (e) => {
-            const widthPx = e.target.value;
-            calCard.style.width = widthPx + 'px';
-            calCard.style.height = (widthPx / 1.585) + 'px'; 
-            pxDisplay.innerText = `Ancho: ${widthPx}px`;
-        });
-
-        function saveCalibration() {
-            const finalWidthPx = parseFloat(slider.value);
-            pixelsPerMm = finalWidthPx / 85.60;
-            renderTestGrid();
-            document.getElementById('step-calibration').classList.remove('active');
-            document.getElementById('step-test').classList.add('active');
+        // --- CÁLCULO TRIGONOMÉTRICO DE DISPARIDAD (ANAGLIFO) ---
+        function calculateDisplacementPx(arcseconds) {
+            // Conversión de segundos de arco a radianes: arcsec * (pi / (180 * 3600))
+            const radians = arcseconds * (Math.PI / 648000);
+            
+            // Disparidad lineal requerida en la superficie de la pantalla (mm)
+            const disparityMm = CLINICAL_DISTANCE_MM * radians;
+            
+            // Conversión a píxeles físicos según la calibración de la pantalla actual
+            const totalDisparityPx = disparityMm * pixelsPerMm;
+            
+            // Retorna el desplazamiento individual para cada ojo (mitad del total)
+            return totalDisparityPx / 2;
         }
 
-        function backToCalibration() {
-            document.getElementById('step-test').classList.remove('active');
-            document.getElementById('step-calibration').classList.add('active');
-        }
+        // --- GENERADOR INTERACTIVO DE LA INTERFAZ ---
+        function renderTest() {
+            const gridContainer = document.getElementById('wirtGrid');
+            gridContainer.innerHTML = ''; // Limpiar render previo
 
-        function calculateDisparityPx(arcsec) {
-            const distanceMm = 400; 
-            const alphaRadians = (arcsec / 3600) * (Math.PI / 180);
-            const disparityMm = 2 * distanceMm * Math.tan(alphaRadians / 2);
-            return disparityMm * pixelsPerMm;
-        }
+            testBlocks.forEach((block, index) => {
+                const shift = calculateDisplacementPx(block.arcseconds);
+                const positions = ['top', 'left', 'right', 'bottom'];
+                
+                // Crear tarjeta del bloque
+                const card = document.createElement('div');
+                card.className = 'block-card';
+                
+                // Título indicador superior izquierdo
+                const title = document.createElement('div');
+                title.className = 'block-title';
+                title.innerText = `${block.id} (${block.arcseconds}")`;
+                card.appendChild(title);
 
-        function renderTestGrid() {
-            const grid = document.getElementById('wirt-grid');
-            grid.innerHTML = ''; 
+                // Contenedor en forma de diamante
+                const diamond = document.createElement('div');
+                diamond.className = 'diamond-layout';
 
-            titmusSpecs.forEach(spec => {
-                const disparity = calculateDisparityPx(spec.arcsec);
-                const shiftPx = (disparity / 2).toFixed(3); 
-
-                const box = document.createElement('div');
-                box.className = `wirt-box ${patientAnswers[spec.id] ? 'completed' : ''}`;
-                box.onclick = () => openAnswerModal(spec.id);
-
-                const title = document.createElement('span');
-                title.className = 'wirt-box-title';
-                title.innerText = `${spec.id} (${spec.arcsec}")`;
-                box.appendChild(title);
-
-                const circleGroup = document.createElement('div');
-                circleGroup.className = 'circle-group';
-
-                const positions = ['Arriba', 'Abajo', 'Izquierda', 'Derecha'];
-                const classMap = { 'Arriba': 'pos-top', 'Abajo': 'pos-bottom', 'Izquierda': 'pos-left', 'Derecha': 'pos-right' };
-
+                // Generar los 4 círculos
                 positions.forEach(pos => {
-                    if (pos === spec.correct) {
-                        const anaglyphWrapper = document.createElement('div');
-                        anaglyphWrapper.className = `anaglyph-container ${classMap[pos]}`;
-                        anaglyphWrapper.innerHTML = `
-                            <div class="anaglyph-blend-zone"></div>
-                            <div class="anaglyph-left" style="transform: translateX(-${shiftPx}px);"></div>
-                            <div class="anaglyph-right" style="transform: translateX(${shiftPx}px);"></div>
-                        `;
-                        circleGroup.appendChild(anaglyphWrapper);
-                    } else {
-                        const flatCircle = document.createElement('div');
-                        flatCircle.className = `base-circle ${classMap[pos]}`;
-                        circleGroup.appendChild(flatCircle);
+                    const wrapper = document.createElement('div');
+                    wrapper.className = `circle-wrapper ${pos}`;
+                    
+                    // Si ya estaba seleccionado previamente, mantenemos su estado visual
+                    if (patientAnswers[block.id] === pos) {
+                        wrapper.classList.add('selected');
                     }
+
+                    // Determinar si este círculo específico es el portador de la disparidad
+                    const isTarget = (pos === block.correct);
+                    const currentShift = isTarget ? shift : 0;
+
+                    // Capas gemelas transparentes con mix-blend-mode: multiply
+                    // Para efecto de flotación (Crossed Disparity) con gafa convencional:
+                    // Ojo Izq (Filtro Rojo) ve capa Cian -> Desplaza a la Derecha (+currentShift)
+                    // Ojo Der (Filtro Cian) ve capa Roja -> Desplaza a la Izquierda (-currentShift)
+                    wrapper.innerHTML = `
+                        <div class="anaglyph-layer red" style="transform: translateX(${-currentShift}px);"></div>
+                        <div class="anaglyph-layer cyan" style="transform: translateX(${currentShift}px);"></div>
+                    `;
+
+                    // Guardar la selección del paciente al hacer clic
+                    wrapper.onclick = () => selectCircle(block.id, pos, card);
+                    diamond.appendChild(wrapper);
                 });
 
-                box.appendChild(circleGroup);
-                
-                if (patientAnswers[spec.id]) {
-                    const ansIndicator = document.createElement('span');
-                    ansIndicator.style = "font-size: 11px; margin-top: 5px; color: var(--accent); font-weight: bold;";
-                    ansIndicator.innerText = `Resp: ${patientAnswers[spec.id]}`;
-                    box.appendChild(ansIndicator);
-                }
-
-                grid.appendChild(box);
+                card.appendChild(diamond);
+                gridContainer.appendChild(card);
             });
         }
 
-        function openAnswerModal(blockId) {
-            selectedBlockId = blockId;
-            document.getElementById('modal-title').innerText = `Bloque N° ${blockId} (${titmusSpecs[blockId-1].arcsec} arcsec)`;
-            document.getElementById('answer-modal').classList.add('active');
-        }
+        // --- LÓGICA DE CONTROL CLÍNICO Y RESPUESTAS ---
+        function selectCircle(blockId, position, cardElement) {
+            // Remover selección previa en este bloque específico
+            const selectedInBlock = cardElement.querySelectorAll('.circle-wrapper');
+            selectedInBlock.forEach(el => el.classList.remove('selected'));
 
-        function closeModal() {
-            document.getElementById('answer-modal').classList.remove('active');
-            selectedBlockId = null;
-        }
-
-        function submitAnswer(direction) {
-            if (selectedBlockId !== null) {
-                patientAnswers[selectedBlockId] = direction;
-                closeModal();
-                renderTestGrid();
+            // Guardar o cambiar la respuesta del paciente
+            if (patientAnswers[blockId] === position) {
+                delete patientAnswers[blockId]; // Si hace clic de nuevo, deselecciona
+            } else {
+                patientAnswers[blockId] = position;
+                // Aplicar clase visual seleccionada
+                const clickedWrapper = cardElement.querySelector(`.circle-wrapper.${position}`);
+                clickedWrapper.classList.add('selected');
             }
         }
 
-        function calculateResults() {
-            let lastCorrectId = 0;
-            let highestArcsecAchieved = '--';
-            let classification = "Invalorable / Sin respuesta";
+        // --- MÓDULO DE RECALIBRACIÓN EN PANTALLA ---
+        function openCalibration() {
+            document.getElementById('calibrationModal').classList.add('active');
+        }
 
-            // Evalúa la progresión estricta bloque por bloque
-            for (let i = 0; i < titmusSpecs.length; i++) {
-                const spec = titmusSpecs[i];
-                if (patientAnswers[spec.id] === spec.correct) {
-                    lastCorrectId = spec.id;
-                    highestArcsecAchieved = spec.arcsec;
-                } else {
-                    break; // Se detiene al primer fallo clínico
+        function closeCalibration() {
+            document.getElementById('calibrationModal').classList.remove('active');
+            renderTest(); // Re-renderizar el test completo recalculando los píxeles reales
+        }
+
+        function updatePixelPitch(sliderValue) {
+            const line = document.getElementById('calLine');
+            const pxLabel = document.getElementById('pxValue');
+            
+            // Actualizar ancho visual de la línea azul en base al slider
+            line.style.width = `${sliderValue}px`;
+            
+            // Ajustar la conversión: Tarjeta de crédito estándar mide exactamente 85.6 mm
+            pixelsPerMm = (sliderValue / 85.6);
+            
+            pxLabel.innerText = `${pixelsPerMm.toFixed(2)} px/mm`;
+        }
+
+        function finishTest() {
+            let correctCount = 0;
+            let reportDetails = "";
+
+            testBlocks.forEach(block => {
+                const answer = patientAnswers[block.id];
+                const isCorrect = (answer === block.correct);
+                if (isCorrect) correctCount++;
+                
+                reportDetails += `Bloque ${block.id} (${block.arcseconds}"): ${answer ? `Seleccionó ${answer.toUpperCase()} (${isCorrect ? 'CORRECTO' : 'INCORRECTO'})` : 'No respondido'}\n`;
+            });
+
+            // Determinar agudeza visual estereoscópica aproximada
+            let stereoAcnuity = "No detectable";
+            for (let i = testBlocks.length - 1; i >= 0; i--) {
+                if (patientAnswers[testBlocks[i].id] === testBlocks[i].correct) {
+                    stereoAcnuity = `${testBlocks[i].arcseconds} segundos de arco`;
+                    break;
                 }
             }
 
-            if (lastCorrectId >= 7) {
-                classification = "Estereopsis Fina (Normal)";
-            } else if (lastCorrectId >= 4) {
-                classification = "Estereopsis Moderada";
-            } else if (lastCorrectId >= 1) {
-                classification = "Estereopsis Gruesa (Macropsia)";
-            } else {
-                classification = "Ausencia de Estereopsis Macroscópica";
-            }
-
-            document.getElementById('clinical-score').innerText = highestArcsecAchieved !== '--' ? `${highestArcsecAchieved}"` : '-- arcsec';
-            document.getElementById('rep-last-block').innerText = lastCorrectId > 0 ? `Bloque N° ${lastCorrectId}` : 'Ninguno';
-            document.getElementById('rep-seconds').innerText = highestArcsecAchieved !== '--' ? `${highestArcsecAchieved} segundos de arco` : 'No alcanzada';
-            document.getElementById('rep-classification').innerText = classification;
-            document.getElementById('rep-ppmm').innerText = `${pixelsPerMm.toFixed(2)} px/mm`;
-
-            document.getElementById('step-test').classList.remove('active');
-            document.getElementById('step-results').classList.add('active');
+            alert(`--- REPORTE CLÍNICO DE ESTEREOPSIS ---\n\n` +
+                  `Respuestas acertadas: ${correctCount} de 9\n` +
+                  `Agudeza Estereoscópica Alcanzada: ${stereoAcnuity}\n\n` +
+                  `Detalles:\n${reportDetails}`);
         }
 
-        function restartTest() {
-            patientAnswers = {};
-            slider.value = "323";
-            calCard.style.width = '323px';
-            calCard.style.height = '204px';
-            pxDisplay.innerText = "Ancho: 323px";
-            
-            document.getElementById('step-results').classList.remove('active');
-            document.getElementById('step-calibration').classList.add('active');
-        }
+        // Ejecutar primer renderizado al cargar el documento
+        window.onload = () => {
+            renderTest();
+        };
     </script>
 </body>
 </html>
