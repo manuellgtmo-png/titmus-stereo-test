@@ -563,4 +563,57 @@
         function submitAnswer(direction) {
             if (selectedBlockId !== null) {
                 patientAnswers[selectedBlockId] = direction;
-                closeModal
+                closeModal();
+                renderTestGrid();
+            }
+        }
+
+        function calculateResults() {
+            let lastCorrectId = 0;
+            let highestArcsecAchieved = '--';
+            let classification = "Invalorable / Sin respuesta";
+
+            // Evalúa la progresión estricta bloque por bloque
+            for (let i = 0; i < titmusSpecs.length; i++) {
+                const spec = titmusSpecs[i];
+                if (patientAnswers[spec.id] === spec.correct) {
+                    lastCorrectId = spec.id;
+                    highestArcsecAchieved = spec.arcsec;
+                } else {
+                    break; // Se detiene al primer fallo clínico
+                }
+            }
+
+            if (lastCorrectId >= 7) {
+                classification = "Estereopsis Fina (Normal)";
+            } else if (lastCorrectId >= 4) {
+                classification = "Estereopsis Moderada";
+            } else if (lastCorrectId >= 1) {
+                classification = "Estereopsis Gruesa (Macropsia)";
+            } else {
+                classification = "Ausencia de Estereopsis Macroscópica";
+            }
+
+            document.getElementById('clinical-score').innerText = highestArcsecAchieved !== '--' ? `${highestArcsecAchieved}"` : '-- arcsec';
+            document.getElementById('rep-last-block').innerText = lastCorrectId > 0 ? `Bloque N° ${lastCorrectId}` : 'Ninguno';
+            document.getElementById('rep-seconds').innerText = highestArcsecAchieved !== '--' ? `${highestArcsecAchieved} segundos de arco` : 'No alcanzada';
+            document.getElementById('rep-classification').innerText = classification;
+            document.getElementById('rep-ppmm').innerText = `${pixelsPerMm.toFixed(2)} px/mm`;
+
+            document.getElementById('step-test').classList.remove('active');
+            document.getElementById('step-results').classList.add('active');
+        }
+
+        function restartTest() {
+            patientAnswers = {};
+            slider.value = "323";
+            calCard.style.width = '323px';
+            calCard.style.height = '204px';
+            pxDisplay.innerText = "Ancho: 323px";
+            
+            document.getElementById('step-results').classList.remove('active');
+            document.getElementById('step-calibration').classList.add('active');
+        }
+    </script>
+</body>
+</html>
