@@ -153,7 +153,7 @@
 
     <div class="header-title">
         <h1>Sistema de Estereopsis Digital</h1>
-        <p>Calibración de Hardware Nativa para Lenovo TB-X306X</p>
+        <p>Test Blindado contra Pistas Monoculares - Lenovo TB-X306X</p>
     </div>
 
     <div class="test-container">
@@ -181,7 +181,7 @@
         <!-- PESTAÑA 2: ANIMALES (ABC) -->
         <div id="tab-animales" class="tab-content">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
-                <strong>Estereopsis Media:</strong> Indique al paciente que examine cada fila (A, B, C) de izquierda a derecha y mencione cuál figura geométrica sobresale en relieve.
+                <strong>Estereopsis Media (Test Ciego):</strong> Indique al paciente que examine cada fila (A, B, C) de izquierda a derecha y mencione cuál figura geométrica sobresale en relieve. Sin gafas, todos los elementos se ven igual de difuminados.
             </p>
             <div class="canvas-center">
                 <canvas id="canvasAnimales" class="test-canvas"></canvas>
@@ -191,7 +191,7 @@
         <!-- PESTAÑA 3: CÍRCULOS (WIRT) -->
         <div id="tab-circulos" class="tab-content">
             <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
-                <strong>Estereopsis Fina (800" a 40"):</strong> El paciente debe identificar cuál de los 4 círculos de cada bloque parece salir de la pantalla. Toque directamente el círculo seleccionado para guardarlo.
+                <strong>Estereopsis Fina (800" a 40" - Test Ciego):</strong> El paciente debe identificar cuál de los 4 círculos de cada bloque parece salir de la pantalla. Toque directamente el círculo seleccionado para guardarlo.
             </p>
             <div class="wirt-grid" id="wirtGridContainer"></div>
         </div>
@@ -201,20 +201,19 @@
 
     <script>
         // --- CONSTANTES DE CALIBRACIÓN FÍSICA PARA LENOVO TB-X306X a 1.76m ---
-        // A 1.76 metros, cada 40" equivale a exactamente 2 píxeles de hardware nativos.
         const PURE_SHIFT_40_ARCSEC = 2; 
 
-        // Base de datos oficial de respuestas correctas
+        // Base de datos oficial de respuestas correctas y desfases de píxeles
         const wirtBlocks = [
-            { id: 1, arcseconds: 800, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 20 }, // 40px
-            { id: 2, arcseconds: 400, correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 10 }, // 20px
-            { id: 3, arcseconds: 200, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 5  }, // 10px
-            { id: 4, arcseconds: 140, correct: 'top',    pxShift: 7 },                         // 7px
-            { id: 5, arcseconds: 100, correct: 'top',    pxShift: 5 },                         // 5px
-            { id: 6, arcseconds: 80,  correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 2  }, // 4px
-            { id: 7, arcseconds: 60,  correct: 'right',  pxShift: 3 },                         // 3px
-            { id: 8, arcseconds: 50,  correct: 'left',   pxShift: 3 },                         // Ajuste entero aproximado
-            { id: 9, arcseconds: 40,  correct: 'top',    pxShift: PURE_SHIFT_40_ARCSEC }       // 2px
+            { id: 1, arcseconds: 800, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 20 }, 
+            { id: 2, arcseconds: 400, correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 10 }, 
+            { id: 3, arcseconds: 200, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 5  }, 
+            { id: 4, arcseconds: 140, correct: 'top',    pxShift: 7 },                         
+            { id: 5, arcseconds: 100, correct: 'top',    pxShift: 5 },                         
+            { id: 6, arcseconds: 80,  correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 2  }, 
+            { id: 7, arcseconds: 60,  correct: 'right',  pxShift: 3 },                         
+            { id: 8, arcseconds: 50,  correct: 'left',   pxShift: 3 },                         
+            { id: 9, arcseconds: 40,  correct: 'top',    pxShift: PURE_SHIFT_40_ARCSEC }       
         ];
 
         const animalesRows = [
@@ -248,41 +247,40 @@
 
             ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
             const cx = 200; const cy = 150;
-            const moscaShift = 150; // Desplazamiento masivo para relieve tosco
+            const moscaShift = 45; // Calibrado para no romper el área de Panum en la tablet
 
-            // Capa Fija Verde (Vista por ojo derecho)
-            ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 6;
-            ctx.beginPath(); // Cuerpo
-            ctx.ellipse(cx - (moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
-            ctx.ellipse(cx - (moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
+            // Capa Verde
+            ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(cx - Math.ceil(moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
+            ctx.ellipse(cx - Math.ceil(moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
             ctx.stroke();
-            ctx.beginPath(); // Alas Desplazadas
-            ctx.ellipse(cx - (moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
-            ctx.ellipse(cx - (moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
+            ctx.beginPath();
+            ctx.ellipse(cx - Math.ceil(moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
+            ctx.ellipse(cx - Math.ceil(moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
             ctx.stroke();
 
-            // Capa Desplazada Roja (Vista por ojo izquierdo)
+            // Capa Roja
             ctx.globalCompositeOperation = 'multiply';
             ctx.strokeStyle = '#ff0000';
-            ctx.beginPath(); // Cuerpo
-            ctx.ellipse(cx + (moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
-            ctx.ellipse(cx + (moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
+            ctx.beginPath();
+            ctx.ellipse(cx + Math.floor(moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
+            ctx.ellipse(cx + Math.floor(moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
             ctx.stroke();
-            ctx.beginPath(); // Alas Desplazadas opuestamente
-            ctx.ellipse(cx + (moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
-            ctx.ellipse(cx + (moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
+            ctx.beginPath();
+            ctx.ellipse(cx + Math.floor(moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
+            ctx.ellipse(cx + Math.floor(moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
             ctx.stroke();
             
             ctx.globalCompositeOperation = 'source-over';
 
-            // Interactividad simple
             canvas.onclick = () => {
                 patientAnswersMosca = 'Percibe Relieve';
-                alert('Resultado de la Mosca guardado: El paciente percibe Estereopsis Gruesa.');
+                alert('Resultado guardado: El paciente refiere Estereopsis Gruesa.');
             };
         }
 
-        // --- MOTOR GRÁFICO 2: ANIMALES ABC ---
+        // --- MOTOR GRÁFICO 2: ANIMALES ABC (BLINDADO) ---
         function drawAnimales() {
             const canvas = document.getElementById('canvasAnimales');
             const ctx = canvas.getContext('2d');
@@ -295,32 +293,39 @@
             const rowY = { A: 60, B: 140, C: 220 };
             const colX = [100, 200, 300, 400];
 
-            // Dibujar las 3 filas
             animalesRows.forEach(rowInfo => {
                 const y = rowY[rowInfo.row];
                 
-                // Rotular Fila
                 ctx.fillStyle = '#64748b'; ctx.font = 'bold 16px sans-serif';
                 ctx.fillText(`Fila ${rowInfo.row}`, 20, y + 5);
 
                 shapesOrder.forEach((shape, idx) => {
                     const x = colX[idx];
                     const isTarget = (shape === rowInfo.correct);
-                    const shift = isTarget ? rowInfo.pxShift : 0;
+                    const shift = rowInfo.pxShift;
+                    const halfShift1 = Math.floor(shift / 2);
+                    const halfShift2 = Math.ceil(shift / 2);
 
-                    // Dibujar Capa Verde
+                    // Capa Verde
                     ctx.strokeStyle = '#00ff00';
-                    drawSingleShape(ctx, shape, x - Math.ceil(shift/2), y);
+                    if (isTarget) {
+                        drawSingleShape(ctx, shape, x - halfShift1, y); // Horizontal
+                    } else {
+                        drawSingleShape(ctx, shape, x, y - halfShift1); // Vertical (Camuflaje)
+                    }
 
-                    // Dibujar Capa Roja Fusionada
+                    // Capa Roja
                     ctx.globalCompositeOperation = 'multiply';
                     ctx.strokeStyle = '#ff0000';
-                    drawSingleShape(ctx, shape, x + Math.floor(shift/2), y);
+                    if (isTarget) {
+                        drawSingleShape(ctx, shape, x + halfShift2, y); // Horizontal
+                    } else {
+                        drawSingleShape(ctx, shape, x, y + halfShift2); // Vertical (Camuflaje)
+                    }
                     ctx.globalCompositeOperation = 'source-over';
                 });
             });
 
-            // Registro de clics geométricos en las filas
             canvas.onclick = (e) => {
                 const rect = canvas.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
@@ -336,7 +341,7 @@
                     if(selectedIdx >= 0 && selectedIdx < 4) {
                         const targetShape = shapesOrder[selectedIdx];
                         patientAnswersAnimales[selectedRow] = targetShape;
-                        alert(`Fila ${selectedRow}: Se registró la respuesta [${targetShape.toUpperCase()}].`);
+                        alert(`Fila ${selectedRow}: Registrado [${targetShape.toUpperCase()}].`);
                     }
                 }
             };
@@ -344,21 +349,21 @@
 
         function drawSingleShape(ctx, shape, x, y) {
             ctx.beginPath();
-            if(shape === 'circle') { ctx.arc(x, y, 18, 0, 2*Math.PI); }
-            else if(shape === 'square') { ctx.rect(x - 16, y - 16, 32, 32); }
+            if(shape === 'circle') { ctx.arc(x, y, 16, 0, 2*Math.PI); }
+            else if(shape === 'square') { ctx.rect(x - 15, y - 15, 30, 30); }
             else if(shape === 'triangle') {
-                ctx.moveTo(x, y - 18); ctx.lineTo(x - 18, y + 14); ctx.lineTo(x + 18, y + 14); ctx.closePath();
+                ctx.moveTo(x, y - 17); ctx.lineTo(x - 17, y + 13); ctx.lineTo(x + 17, y + 13); ctx.closePath();
             } else if(shape === 'star') {
                 for (let i = 0; i < 5; i++) {
-                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * 18 + x, -Math.sin((18 + i * 72) * Math.PI / 180) * 18 + y);
-                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * 8 + x, -Math.sin((54 + i * 72) * Math.PI / 180) * 8 + y);
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * 17 + x, -Math.sin((18 + i * 72) * Math.PI / 180) * 17 + y);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * 7 + x, -Math.sin((54 + i * 72) * Math.PI / 180) * 7 + y);
                 }
                 ctx.closePath();
             }
             ctx.stroke();
         }
 
-        // --- MOTOR GRÁFICO 3: CÍRCULOS DE WIRT (1 AL 9) ---
+        // --- MOTOR GRÁFICO 3: CÍRCULOS DE WIRT (BLINDADO CON DESFASE VERTICAL) ---
         function drawWirtGrid() {
             const container = document.getElementById('wirtGridContainer');
             container.innerHTML = '';
@@ -416,42 +421,51 @@
                 right: {x: cx + step, y: cy}, bottom: {x: cx, y: cy + step}
             };
 
-            // Marcador visual clínico de selección interna
             if(patientAnswersWirt[block.id]) {
                 ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5; ctx.beginPath();
                 const sel = positions[patientAnswersWirt[block.id]];
                 ctx.arc(sel.x, sel.y, r + 5, 0, 2*Math.PI); ctx.stroke();
             }
 
+            const shift = block.pxShift;
+            const halfShift1 = Math.floor(shift / 2);
+            const halfShift2 = Math.ceil(shift / 2);
+
             ctx.lineWidth = 3;
-            // Capa Fija Verde (Ojo Derecho)
+
+            // 1. Capa Verde (Aplicada a todos los círculos)
             ctx.strokeStyle = '#00ff00';
             for(let p in positions) {
                 ctx.beginPath();
-                const shift = (p === block.correct) ? block.pxShift : 0;
-                ctx.arc(positions[p].x - Math.ceil(shift/2), positions[p].y, r, 0, 2*Math.PI);
+                if (p === block.correct) {
+                    ctx.arc(positions[p].x - halfShift1, positions[p].y, r, 0, 2*Math.PI); // Desfase horizontal real
+                } else {
+                    ctx.arc(positions[p].x, positions[p].y - halfShift1, r, 0, 2*Math.PI); // Desfase vertical camuflaje
+                }
                 ctx.stroke();
             }
 
-            // Capa Desplazada Roja (Ojo Izquierdo)
+            // 2. Capa Roja Fusionada con Multiply (Aplicada a todos los círculos)
             ctx.globalCompositeOperation = 'multiply';
             ctx.strokeStyle = '#ff0000';
             for(let p in positions) {
                 ctx.beginPath();
-                const shift = (p === block.correct) ? block.pxShift : 0;
-                ctx.arc(positions[p].x + Math.floor(shift/2), positions[p].y, r, 0, 2*Math.PI);
+                if (p === block.correct) {
+                    ctx.arc(positions[p].x + halfShift2, positions[p].y, r, 0, 2*Math.PI); // Desfase horizontal real
+                } else {
+                    ctx.arc(positions[p].x, positions[p].y + halfShift2, r, 0, 2*Math.PI); // Desfase vertical camuflaje
+                }
                 ctx.stroke();
             }
             ctx.globalCompositeOperation = 'source-over';
         }
 
-        // --- SISTEMA DE CORRECCIÓN AUTOMÁTICA Y REPORTE ---
+        // --- REPORTE CLÍNICO FINAL ---
         function generarReporteClinico() {
             let totalWirtCorrect = 0;
             let totalAnimalesCorrect = 0;
             let agudezaFinaAlcanzada = "No detectable";
 
-            // Validar Círculos
             wirtBlocks.forEach(b => {
                 if(patientAnswersWirt[b.id] === b.correct) {
                     totalWirtCorrect++;
@@ -459,7 +473,6 @@
                 }
             });
 
-            // Validar Animales
             animalesRows.forEach(r => {
                 if(patientAnswersAnimales[r.row] === r.correct) totalAnimalesCorrect++;
             });
@@ -470,11 +483,10 @@
                 `2. Estereopsis Media (Animales): ${totalAnimalesCorrect} de 3 aciertos.\n` +
                 `3. Estereopsis Fina (Círculos): ${totalWirtCorrect} de 9 aciertos.\n\n` +
                 `AGUDEZA ESTEREOSCÓPICA LOGRADA: ${agudezaFinaAlcanzada}\n\n` +
-                `*Calibración óptima ejecutada a 1.76 metros en pantalla Lenovo M10 HD.`
+                `*Prueba realizada bajo entorno controlado a 1.76 metros en hardware Lenovo M10 HD.`
             );
         }
 
-        // Ejecutar carga inicial
         window.onload = () => { drawMosca(); };
     </script>
 </body>
