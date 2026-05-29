@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistema Digital de Estereopsis Titmus</title>
+    <title>Sistema Digital de Estereopsis Titmus - Perceptum</title>
     <style>
         :root {
-            --primary-color: #22c55e;
-            --primary-hover: #16a34a;
-            --gray-muted: #94a3b8;
-            --bg-body: #f8fafc;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f1f5f9;
             --card-bg: #ffffff;
+            --text-main: #0f172a;
         }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-body);
-            color: #1e293b;
+            color: var(--text-main);
             margin: 0;
             padding: 15px;
             display: flex;
@@ -31,210 +31,339 @@
             margin-bottom: 15px;
         }
 
-        .header-title h1 {
-            font-size: 24px;
-            margin: 0 0 5px 0;
-            color: #0f172a;
-        }
-
-        .header-title p {
-            font-size: 12px;
-            color: var(--gray-muted);
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .header-title h1 { font-size: 24px; margin: 0 0 5px 0; color: #0f172a; }
+        .header-title p { font-size: 12px; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
 
         .test-container {
             background-color: var(--card-bg);
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
             width: 100%;
             padding: 20px;
             box-sizing: border-box;
         }
 
-        .test-header {
+        /* Sistema de Pestañas Clínicas */
+        .tabs-nav {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 10px;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
         }
 
-        .test-header h2 {
-            font-size: 18px;
-            margin: 0 0 5px 0;
-            color: #1e293b;
-        }
-
-        .clinical-badge {
-            background-color: #fee2e2;
-            color: #ef4444;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        .instructions {
-            font-size: 13px;
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
             color: #64748b;
-            line-height: 1.5;
-            margin: 0 0 20px 0;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .clinical-alert {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1e40af;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Layout de los sub-tests */
+        .canvas-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .test-canvas {
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            image-rendering: pixelated;
+            cursor: pointer;
         }
 
         .wirt-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-bottom: 25px;
         }
 
         @media (max-width: 600px) {
             .wirt-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 400px) {
-            .wirt-grid { grid-template-columns: 1fr; }
-        }
 
         .block-card {
-            background: var(--card-bg);
+            background: #ffffff;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 10px;
-            position: relative;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            position: relative;
         }
 
         .block-title {
             position: absolute;
-            top: 8px;
-            left: 10px;
+            top: 6px;
+            left: 8px;
             font-size: 11px;
-            color: var(--gray-muted);
+            color: #94a3b8;
             font-weight: 700;
         }
 
-        /* Canvas optimizado para renderizado por hardware sin suavizado */
-        .test-canvas {
-            margin-top: 15px;
-            cursor: pointer;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: -webkit-crisp-edges;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-        }
-
-        .actions-footer {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .btn {
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 8px;
+        .btn-report {
+            width: 100%;
+            background-color: #22c55e;
+            color: white;
             border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            margin-top: 15px;
         }
-
-        .btn-secondary { background-color: #64748b; color: white; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-
-        /* Modal de Calibración */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .modal-overlay.active { visibility: visible; opacity: 1; }
-        .modal-card { background: white; padding: 20px; border-radius: 16px; max-width: 450px; width: 100%; margin: 15px; }
-        .calibration-line { height: 8px; background-color: #3b82f6; margin: 20px 0; border-radius: 4px; }
-        .slider-control { width: 100%; margin: 15px 0; }
+        .btn-report:hover { background-color: #16a34a; }
     </style>
 </head>
 <body>
 
     <div class="header-title">
-        <h1>Sistema Digital de Estereopsis Titmus</h1>
-        <p>Motor de Renderizado Canónico por Píxel Físico</p>
+        <h1>Sistema de Estereopsis Digital</h1>
+        <p>Calibración de Hardware Nativa para Lenovo TB-X306X</p>
     </div>
 
     <div class="test-container">
-        <div class="test-header">
-            <div><h2>Paso 2: Sub-test de Círculos (Wirt)</h2></div>
-            <span class="clinical-badge">Distancia: 40 cm</span>
+        <!-- Navegación entre pruebas -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('mosca')">1. La Mosca</button>
+            <button class="tab-btn" onclick="switchTab('animales')">2. Animales (ABC)</button>
+            <button class="tab-btn" onclick="switchTab('circulos')">3. Círculos (Wirt)</button>
         </div>
-        
-        <p class="instructions">
-            Con los <strong>lentes anaglifos</strong> puestos, el paciente debe indicar qué círculo (Arriba, Abajo, Izquierda o Derecha) sobresale en relieve. Toque directamente el círculo seleccionado para registrarlo.
-        </p>
 
-        <div class="wirt-grid" id="wirtGrid"></div>
-
-        <div class="actions-footer">
-            <button class="btn btn-secondary" onclick="openCalibration()">Calibrar Pantalla</button>
-            <button class="btn btn-primary" onclick="finishTest()">Ver Reporte</button>
+        <div class="clinical-alert">
+            <strong>Protocolo Clínico de Examen:</strong> Coloque las gafas <strong>Rojo/Verde</strong> al paciente (Filtro Rojo en Ojo Izquierdo). Ubique la pantalla de la tablet exactamente a <strong>1.76 metros</strong> del paciente a la altura de sus ojos. El paciente debe usar su corrección óptica de lejos.
         </div>
-    </div>
 
-    <div class="modal-overlay" id="calibrationModal">
-        <div class="modal-card">
-            <h3>Calibración de Densidad de Pantalla</h3>
-            <p style="font-size: 13px; color: #64748b;">
-                Ajuste el deslizador hasta que la línea coincida exactamente con el ancho de una tarjeta plástica física (85.6 mm) apoyada sobre la pantalla.
+        <!-- PESTAÑA 1: LA MOSCA -->
+        <div id="tab-mosca" class="tab-content active">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                <strong>Estereopsis Gruesa (3000"):</strong> Pida al paciente que intente tomar las alas de la mosca con sus dedos. Si percibe estereopsis, las alas parecerán flotar significativamente por delante de la tablet.
             </p>
-            <div style="display: flex; justify-content: center;">
-                <div class="calibration-line" id="calLine" style="width: 323px;"></div>
+            <div class="canvas-center">
+                <canvas id="canvasMosca" class="test-canvas"></canvas>
             </div>
-            <input type="range" min="150" max="600" value="323" class="slider-control" id="calSlider" oninput="updatePixelPitch(this.value)">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
-                <span>Densidad CSS Calculada</span>
-                <span id="pxValue">3.78 px/mm</span>
-            </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="closeCalibration()">Aplicar</button>
         </div>
+
+        <!-- PESTAÑA 2: ANIMALES (ABC) -->
+        <div id="tab-animales" class="tab-content">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                <strong>Estereopsis Media:</strong> Indique al paciente que examine cada fila (A, B, C) de izquierda a derecha y mencione cuál figura geométrica sobresale en relieve.
+            </p>
+            <div class="canvas-center">
+                <canvas id="canvasAnimales" class="test-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- PESTAÑA 3: CÍRCULOS (WIRT) -->
+        <div id="tab-circulos" class="tab-content">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                <strong>Estereopsis Fina (800" a 40"):</strong> El paciente debe identificar cuál de los 4 círculos de cada bloque parece salir de la pantalla. Toque directamente el círculo seleccionado para guardarlo.
+            </p>
+            <div class="wirt-grid" id="wirtGridContainer"></div>
+        </div>
+
+        <button class="btn-report" onclick="generarReporteClinico()">Finalizar Examen y Ver Reporte</button>
     </div>
 
     <script>
-        const CLINICAL_DISTANCE_MM = 400;
-        let pixelsPerMmCss = 3.78; // Medido en píxeles lógicos (CSS)
+        // --- CONSTANTES DE CALIBRACIÓN FÍSICA PARA LENOVO TB-X306X a 1.76m ---
+        // A 1.76 metros, cada 40" equivale a exactamente 2 píxeles de hardware nativos.
+        const PURE_SHIFT_40_ARCSEC = 2; 
 
-        const testBlocks = [
-            { id: 1, arcseconds: 800, correct: 'bottom' },
-            { id: 2, arcseconds: 400, correct: 'left' },
-            { id: 3, arcseconds: 200, correct: 'bottom' },
-            { id: 4, arcseconds: 140, correct: 'top' },
-            { id: 5, arcseconds: 100, correct: 'top' },
-            { id: 6, arcseconds: 80,  correct: 'left' },
-            { id: 7, arcseconds: 60,  correct: 'right' },
-            { id: 8, arcseconds: 50,  correct: 'left' },
-            { id: 9, arcseconds: 40,  correct: 'top' }
+        // Base de datos oficial de respuestas correctas
+        const wirtBlocks = [
+            { id: 1, arcseconds: 800, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 20 }, // 40px
+            { id: 2, arcseconds: 400, correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 10 }, // 20px
+            { id: 3, arcseconds: 200, correct: 'bottom', pxShift: PURE_SHIFT_40_ARCSEC * 5  }, // 10px
+            { id: 4, arcseconds: 140, correct: 'top',    pxShift: 7 },                         // 7px
+            { id: 5, arcseconds: 100, correct: 'top',    pxShift: 5 },                         // 5px
+            { id: 6, arcseconds: 80,  correct: 'left',   pxShift: PURE_SHIFT_40_ARCSEC * 2  }, // 4px
+            { id: 7, arcseconds: 60,  correct: 'right',  pxShift: 3 },                         // 3px
+            { id: 8, arcseconds: 50,  correct: 'left',   pxShift: 3 },                         // Ajuste entero aproximado
+            { id: 9, arcseconds: 40,  correct: 'top',    pxShift: PURE_SHIFT_40_ARCSEC }       // 2px
         ];
 
-        let patientAnswers = {};
+        const animalesRows = [
+            { row: 'A', arcseconds: 400, correct: 'triangle', pxShift: 20 },
+            { row: 'B', arcseconds: 200, correct: 'square',   pxShift: 10 },
+            { row: 'C', arcseconds: 100, correct: 'star',     pxShift: 5 }
+        ];
 
-        function buildGrid() {
-            const gridContainer = document.getElementById('wirtGrid');
-            gridContainer.innerHTML = '';
+        let patientAnswersWirt = {};
+        let patientAnswersAnimales = { A: null, B: null, C: null };
+        let patientAnswersMosca = null;
 
-            testBlocks.forEach(block => {
+        // --- SISTEMA DE NAVEGACIÓN ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            if(tabName === 'mosca') drawMosca();
+            if(tabName === 'animales') drawAnimales();
+            if(tabName === 'circulos') drawWirtGrid();
+        }
+
+        // --- MOTOR GRÁFICO 1: LA MOSCA (3000") ---
+        function drawMosca() {
+            const canvas = document.getElementById('canvasMosca');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400; canvas.height = 300;
+
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const cx = 200; const cy = 150;
+            const moscaShift = 150; // Desplazamiento masivo para relieve tosco
+
+            // Capa Fija Verde (Vista por ojo derecho)
+            ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 6;
+            ctx.beginPath(); // Cuerpo
+            ctx.ellipse(cx - (moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
+            ctx.ellipse(cx - (moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
+            ctx.stroke();
+            ctx.beginPath(); // Alas Desplazadas
+            ctx.ellipse(cx - (moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
+            ctx.ellipse(cx - (moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
+            ctx.stroke();
+
+            // Capa Desplazada Roja (Vista por ojo izquierdo)
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.strokeStyle = '#ff0000';
+            ctx.beginPath(); // Cuerpo
+            ctx.ellipse(cx + (moscaShift/2), cy, 35, 55, 0, 0, 2*Math.PI);
+            ctx.ellipse(cx + (moscaShift/2), cy - 65, 18, 18, 0, 0, 2*Math.PI);
+            ctx.stroke();
+            ctx.beginPath(); // Alas Desplazadas opuestamente
+            ctx.ellipse(cx + (moscaShift/2) - 45, cy - 20, 25, 65, Math.PI/4, 0, 2*Math.PI);
+            ctx.ellipse(cx + (moscaShift/2) + 45, cy - 20, 25, 65, -Math.PI/4, 0, 2*Math.PI);
+            ctx.stroke();
+            
+            ctx.globalCompositeOperation = 'source-over';
+
+            // Interactividad simple
+            canvas.onclick = () => {
+                patientAnswersMosca = 'Percibe Relieve';
+                alert('Resultado de la Mosca guardado: El paciente percibe Estereopsis Gruesa.');
+            };
+        }
+
+        // --- MOTOR GRÁFICO 2: ANIMALES ABC ---
+        function drawAnimales() {
+            const canvas = document.getElementById('canvasAnimales');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 500; canvas.height = 280;
+
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 4;
+
+            const shapesOrder = ['circle', 'triangle', 'square', 'star'];
+            const rowY = { A: 60, B: 140, C: 220 };
+            const colX = [100, 200, 300, 400];
+
+            // Dibujar las 3 filas
+            animalesRows.forEach(rowInfo => {
+                const y = rowY[rowInfo.row];
+                
+                // Rotular Fila
+                ctx.fillStyle = '#64748b'; ctx.font = 'bold 16px sans-serif';
+                ctx.fillText(`Fila ${rowInfo.row}`, 20, y + 5);
+
+                shapesOrder.forEach((shape, idx) => {
+                    const x = colX[idx];
+                    const isTarget = (shape === rowInfo.correct);
+                    const shift = isTarget ? rowInfo.pxShift : 0;
+
+                    // Dibujar Capa Verde
+                    ctx.strokeStyle = '#00ff00';
+                    drawSingleShape(ctx, shape, x - Math.ceil(shift/2), y);
+
+                    // Dibujar Capa Roja Fusionada
+                    ctx.globalCompositeOperation = 'multiply';
+                    ctx.strokeStyle = '#ff0000';
+                    drawSingleShape(ctx, shape, x + Math.floor(shift/2), y);
+                    ctx.globalCompositeOperation = 'source-over';
+                });
+            });
+
+            // Registro de clics geométricos en las filas
+            canvas.onclick = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+
+                let selectedRow = null;
+                if(clickY > 20 && clickY < 100) selectedRow = 'A';
+                else if(clickY >= 100 && clickY < 180) selectedRow = 'B';
+                else if(clickY >= 180 && clickY < 260) selectedRow = 'C';
+
+                if(selectedRow) {
+                    let selectedIdx = Math.floor((clickX - 50) / 100);
+                    if(selectedIdx >= 0 && selectedIdx < 4) {
+                        const targetShape = shapesOrder[selectedIdx];
+                        patientAnswersAnimales[selectedRow] = targetShape;
+                        alert(`Fila ${selectedRow}: Se registró la respuesta [${targetShape.toUpperCase()}].`);
+                    }
+                }
+            };
+        }
+
+        function drawSingleShape(ctx, shape, x, y) {
+            ctx.beginPath();
+            if(shape === 'circle') { ctx.arc(x, y, 18, 0, 2*Math.PI); }
+            else if(shape === 'square') { ctx.rect(x - 16, y - 16, 32, 32); }
+            else if(shape === 'triangle') {
+                ctx.moveTo(x, y - 18); ctx.lineTo(x - 18, y + 14); ctx.lineTo(x + 18, y + 14); ctx.closePath();
+            } else if(shape === 'star') {
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * 18 + x, -Math.sin((18 + i * 72) * Math.PI / 180) * 18 + y);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * 8 + x, -Math.sin((54 + i * 72) * Math.PI / 180) * 8 + y);
+                }
+                ctx.closePath();
+            }
+            ctx.stroke();
+        }
+
+        // --- MOTOR GRÁFICO 3: CÍRCULOS DE WIRT (1 AL 9) ---
+        function drawWirtGrid() {
+            const container = document.getElementById('wirtGridContainer');
+            container.innerHTML = '';
+
+            wirtBlocks.forEach(block => {
                 const card = document.createElement('div');
                 card.className = 'block-card';
 
@@ -243,157 +372,110 @@
                 title.innerText = `${block.id} (${block.arcseconds}")`;
                 card.appendChild(title);
 
-                // Crear elemento Canvas
                 const canvas = document.createElement('canvas');
-                canvas.id = `canvas-${block.id}`;
+                canvas.width = 120; canvas.height = 120;
                 canvas.className = 'test-canvas';
                 card.appendChild(canvas);
 
-                // Manejo de clicks basado en coordenadas geométricas locales
+                drawWirtCanvas(canvas, block);
+
                 canvas.onclick = (e) => {
                     const rect = canvas.getBoundingClientRect();
+                    const cx = 60; const cy = 60; const step = 34;
                     const clickX = e.clientX - rect.left;
                     const clickY = e.clientY - rect.top;
 
-                    // Centros teóricos de los 4 círculos en el espacio CSS (120x120)
-                    const cx = 60; const cy = 60; const dist = 36;
-                    const points = {
-                        top:    { x: cx,        y: cy - dist },
-                        left:   { x: cx - dist, y: cy },
-                        right:  { x: cx + dist, y: cy },
-                        bottom: { x: cx,        y: cy + dist }
+                    const lookup = {
+                        top: {x: cx, y: cy - step}, left: {x: cx - step, y: cy},
+                        right: {x: cx + step, y: cy}, bottom: {x: cx, y: cy + step}
                     };
 
-                    let targetPos = null;
-                    let minDist = 99999;
-
-                    for (let pos in points) {
-                        const d = Math.hypot(clickX - points[pos].x, clickY - points[pos].y);
-                        if (d < minDist) {
-                            minDist = d;
-                            targetPos = pos;
-                        }
+                    let selectedPos = null; let maxD = 9999;
+                    for(let p in lookup) {
+                        let d = Math.hypot(clickX - lookup[p].x, clickY - lookup[p].y);
+                        if(d < maxD) { maxD = d; selectedPos = p; }
                     }
 
-                    if (minDist < 24) { // Umbral de tolerancia de click
-                        if (patientAnswers[block.id] === targetPos) {
-                            delete patientAnswers[block.id];
-                        } else {
-                            patientAnswers[block.id] = targetPos;
-                        }
-                        drawBlock(block);
+                    if(maxD < 20) {
+                        patientAnswersWirt[block.id] = (patientAnswersWirt[block.id] === selectedPos) ? null : selectedPos;
+                        drawWirtCanvas(canvas, block);
                     }
                 };
 
-                gridContainer.appendChild(card);
-                drawBlock(block);
+                container.appendChild(card);
             });
         }
 
-        function drawBlock(block) {
-            const canvas = document.getElementById(`canvas-${block.id}`);
-            if (!canvas) return;
+        function drawWirtCanvas(canvas, block) {
             const ctx = canvas.getContext('2d');
-            
-            // Factor de escala de hardware real del dispositivo (DPR)
-            const dpr = window.devicePixelRatio || 1;
-            const sizeCss = 120;
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Ajustar tamaño del buffer del canvas a píxeles FÍSICOS reales de pantalla
-            canvas.width = sizeCss * dpr;
-            canvas.height = sizeCss * dpr;
-            canvas.style.width = `${sizeCss}px`;
-            canvas.style.height = `${sizeCss}px`;
-
-            // Rellenar fondo blanco sólido (mandatorio para fusión "multiply")
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Coordenadas físicas internas
-            const cx = 60 * dpr;
-            const cy = 60 * dpr;
-            const dist = 36 * dpr;
-            const radius = 16 * dpr;
-            const lineWidth = 3 * dpr;
-
+            const cx = 60; const cy = 60; const step = 34; const r = 13;
             const positions = {
-                top:    { x: cx,        y: cy - dist },
-                left:   { x: cx - dist, y: cy },
-                right:  { x: cx + dist, y: cy },
-                bottom: { x: cx,        y: cy + dist }
+                top: {x: cx, y: cy - step}, left: {x: cx - step, y: cy},
+                right: {x: cx + step, y: cy}, bottom: {x: cx, y: cy + step}
             };
 
-            // 1. Si el bloque está respondido, dibujar anillo gris de selección en modo estándar
-            const selected = patientAnswers[block.id];
-            if (selected && positions[selected]) {
-                ctx.strokeStyle = '#94a3b8';
-                ctx.lineWidth = 1.5 * dpr;
+            // Marcador visual clínico de selección interna
+            if(patientAnswersWirt[block.id]) {
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5; ctx.beginPath();
+                const sel = positions[patientAnswersWirt[block.id]];
+                ctx.arc(sel.x, sel.y, r + 5, 0, 2*Math.PI); ctx.stroke();
+            }
+
+            ctx.lineWidth = 3;
+            // Capa Fija Verde (Ojo Derecho)
+            ctx.strokeStyle = '#00ff00';
+            for(let p in positions) {
                 ctx.beginPath();
-                ctx.arc(positions[selected].x, positions[selected].y, radius + 6 * dpr, 0, 2 * Math.PI);
+                const shift = (p === block.correct) ? block.pxShift : 0;
+                ctx.arc(positions[p].x - Math.ceil(shift/2), positions[p].y, r, 0, 2*Math.PI);
                 ctx.stroke();
             }
 
-            // --- MÓDULO MATEMÁTICO CLÍNICO ---
-            const radians = block.arcseconds * (Math.PI / 648000);
-            const disparityMm = CLINICAL_DISTANCE_MM * radians;
-            
-            // Densidad en píxeles de hardware por milímetro
-            const physicalPixelsPerMm = pixelsPerMmCss * dpr;
-            
-            // Forzar el desplazamiento total a una unidad entera de píxeles físicos
-            const totalPhysicalShift = Math.round(disparityMm * physicalPixelsPerMm);
-
-            // 2. CAPA ROJA (Estática)
+            // Capa Desplazada Roja (Ojo Izquierdo)
+            ctx.globalCompositeOperation = 'multiply';
             ctx.strokeStyle = '#ff0000';
-            ctx.lineWidth = lineWidth;
-            for (let pos in positions) {
+            for(let p in positions) {
                 ctx.beginPath();
-                ctx.arc(positions[pos].x, positions[pos].y, radius, 0, 2 * Math.PI);
+                const shift = (p === block.correct) ? block.pxShift : 0;
+                ctx.arc(positions[p].x + Math.floor(shift/2), positions[p].y, r, 0, 2*Math.PI);
                 ctx.stroke();
             }
-
-            // 3. CAPA CIAN (Desplazada por hardware absoluto únicamente en el círculo diana)
-            ctx.globalCompositeOperation = 'multiply'; // Fusión sub-píxel perfecta
-            ctx.strokeStyle = '#00ffff';
-            for (let pos in positions) {
-                const isTarget = (pos === block.correct);
-                // Si es el círculo diana, aplicamos el salto exacto de píxeles físicos enteros
-                const shift = isTarget ? totalPhysicalShift : 0;
-
-                ctx.beginPath();
-                ctx.arc(positions[pos].x + shift, positions[pos].y, radius, 0, 2 * Math.PI);
-                ctx.stroke();
-            }
-
-            // Restaurar contexto
             ctx.globalCompositeOperation = 'source-over';
         }
 
-        function openCalibration() { document.getElementById('calibrationModal').classList.add('active'); }
-        function closeCalibration() {
-            document.getElementById('calibrationModal').classList.remove('active');
-            buildGrid(); // Redibujar todos los canvas recalculando la nueva densidad
-        }
+        // --- SISTEMA DE CORRECCIÓN AUTOMÁTICA Y REPORTE ---
+        function generarReporteClinico() {
+            let totalWirtCorrect = 0;
+            let totalAnimalesCorrect = 0;
+            let agudezaFinaAlcanzada = "No detectable";
 
-        function updatePixelPitch(val) {
-            document.getElementById('calLine').style.width = `${val}px`;
-            pixelsPerMmCss = val / 85.6;
-            document.getElementById('pxValue').innerText = `${pixelsPerMmCss.toFixed(2)} px/mm`;
-        }
-
-        function finishTest() {
-            let correct = 0;
-            let report = "";
-            testBlocks.forEach(b => {
-                const ans = patientAnswers[b.id];
-                const isCorrect = (ans === b.correct);
-                if (isCorrect) correct++;
-                report += `Bloque ${b.id}: ${ans ? `${ans.toUpperCase()} (${isCorrect?'Acierto':'Fallo'})` : 'No respondido'}\n`;
+            // Validar Círculos
+            wirtBlocks.forEach(b => {
+                if(patientAnswersWirt[b.id] === b.correct) {
+                    totalWirtCorrect++;
+                    agudezaFinaAlcanzada = `${b.arcseconds}" segundos de arco`;
+                }
             });
-            alert(`Resultados: ${correct} / 9 aciertos.\n\nDetalle:\n${report}`);
+
+            // Validar Animales
+            animalesRows.forEach(r => {
+                if(patientAnswersAnimales[r.row] === r.correct) totalAnimalesCorrect++;
+            });
+
+            alert(
+                `--- REPORTE EXAMEN DE ESTEREOPSIS (CENTRO PERCEPTUM) ---\n\n` +
+                `1. Estereopsis Gruesa (Mosca): ${patientAnswersMosca || 'No realizada / No ve'}\n` +
+                `2. Estereopsis Media (Animales): ${totalAnimalesCorrect} de 3 aciertos.\n` +
+                `3. Estereopsis Fina (Círculos): ${totalWirtCorrect} de 9 aciertos.\n\n` +
+                `AGUDEZA ESTEREOSCÓPICA LOGRADA: ${agudezaFinaAlcanzada}\n\n` +
+                `*Calibración óptima ejecutada a 1.76 metros en pantalla Lenovo M10 HD.`
+            );
         }
 
-        window.onload = buildGrid;
+        // Ejecutar carga inicial
+        window.onload = () => { drawMosca(); };
     </script>
 </body>
 </html>
