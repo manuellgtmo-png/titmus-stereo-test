@@ -3,144 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Titmus Dinámico | Centro Perceptum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <title>Titmus Test Digital | Centro Perceptum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0f1a;
-            --panel: #1e293b;
+            --bg: #000000; /* Fondo negro absoluto para eliminar contaminación lumínica */
+            --panel: #0f172a;
+            --border: #334155;
             --accent: #fbbf24;
+            --target-color: #ef4444; /* Rojo brillante para el estímulo dinámico */
         }
+        
         body, html {
-            margin:0; padding:0; overflow:hidden; background: var(--bg);
-            font-family: 'Montserrat', sans-serif; color: white; height:100vh; width:100vw;
-            user-select:none; -webkit-user-select:none;
+            margin: 0; padding: 0; overflow-x: hidden; background: var(--bg);
+            font-family: 'Montserrat', sans-serif; color: #ffffff; min-height: 100vh; width: 100vw;
+            user-select: none; -webkit-user-select: none;
         }
+
+        /* Barra médica superior */
         .top-bar {
-            height: 70px; background: var(--panel); display: flex;
-            justify-content: space-between; align-items: center; padding: 0 20px;
-            border-bottom: 2px solid #334155;
+            height: 65px; background: #1e293b; display: flex;
+            justify-content: space-between; align-items: center; padding: 0 25px;
+            border-bottom: 2px solid var(--border); box-sizing: border-box;
         }
-        .container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: calc(100vh - 70px); gap: 40px; padding: 20px; box-sizing: border-box;
-        }
-        /* Fila de los 4 círculos de Wirt */
-        .wirt-row {
-            display: flex; gap: 40px; justify-content: center; align-items: center;
-        }
-        .circle-box {
-            width: 110px; height: 110px; border-radius: 50%; background: #334155;
-            display: flex; align-items: center; justify-content: center; position: relative;
-            border: 3px solid #475569; cursor: pointer;
-        }
-        /* El estímulo que se moverá de izquierda a derecha */
-        .target-stimulus {
-            width: 50px; height: 50px; border-radius: 50%; background: #ef4444; /* Rojo brillante plano */
-            position: absolute; left: calc(50% - 25px); top: calc(50% - 25px);
-        }
-        .static-stimulus {
-            width: 50px; height: 50px; border-radius: 50%; background: #ffffff;
-            position: absolute; left: calc(50% - 25px); top: calc(50% - 25px);
-        }
-        .control-panel {
-            background: var(--panel); padding: 15px 30px; border-radius: 15px;
-            border: 1px solid #475569; width: 400px; text-align: center;
-        }
-        input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
         .btn-back {
-            background:#ef4444; color:white; border:none; padding:10px 20px;
-            font-weight:900; border-radius:8px; cursor:pointer; text-decoration:none; font-size:0.8rem;
+            background: #ef4444; color: white; border: none; padding: 10px 20px;
+            font-weight: 900; border-radius: 50px; cursor: pointer; text-decoration: none; font-size: 0.8rem;
         }
+
+        /* Contenedor de la lámina del test */
+        .titmus-book {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .test-section {
+            background: #05070f; border: 2px solid var(--border); border-radius: 20px;
+            padding: 20px; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .section-title {
+            margin: 0 0 15px 0; font-size: 1.1rem; color: var(--accent); 
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 900;
+        }
+
+        /* PANEL 1: LA MOSCA GIGANTE */
+        .mosca-container {
+            width: 100%; height: 280px; position: relative; overflow: hidden;
+            background: #000; border-radius: 15px; display: flex; justify-content: center; align-items: center;
+        }
+        .mosca-body { font-size: 120px; position: relative; z-index: 2; cursor: pointer;}
+        .mosca-wing {
+            font-size: 110px; position: absolute; top: 45px; opacity: 0.9;
+            will-change: transform; cursor: pointer;
+        }
+        .wing-left { left: 140px; transform-origin: right bottom; }
+        .wing-right { right: 140px; transform-origin: left bottom; }
+
+        /* PANEL 2: LOS ANIMALES (A, B, C) */
+        .animals-box { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+        .animal-row {
+            display: flex; align-items: center; background: #0f172a; 
+            padding: 10px; border-radius: 12px; border: 1px solid #1e293b;
+        }
+        .row-label { font-weight: 900; font-size: 1.2rem; color: var(--accent); width: 30px; }
+        .animal-list { display: flex; justify-content: space-around; flex-grow: 1; }
+        .animal-item { font-size: 2.2rem; position: relative; width: 50px; text-align: center; cursor: pointer;}
+        .animal-target { position: absolute; left: 0; top: 0; width: 100%; height: 100%; will-change: transform; color: var(--target-color); }
+
+        /* PANEL 3: CUADRÍCULA DE LOS 9 CÍRCULOS DE WIRT */
+        .wirt-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%;
+        }
+        .wirt-box {
+            background: #0f172a; border: 1px solid #1e293b; border-radius: 12px;
+            padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative;
+        }
+        .wirt-number { font-size: 0.85rem; font-weight: 900; color: var(--accent); margin-bottom: 5px; }
+        .wirt-circles-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+        }
+        .wirt-item {
+            width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ffffff;
+            position: relative; background: #000; box-sizing: border-box;
+        }
+        .wirt-target {
+            width: 18px; height: 18px; border-radius: 50%; background: var(--target-color);
+            position: absolute; left: calc(50% - 9px); top: calc(50% - 9px);
+            will-change: transform;
+        }
+        .wirt-static {
+            width: 18px; height: 18px; border-radius: 50%; background: #ffffff;
+            position: absolute; left: calc(50% - 9px); top: calc(50% - 9px);
+        }
+
+        /* Selector de calibración general */
+        .calibrator {
+            grid-column: span 2; background: #1e293b; padding: 15px 30px; 
+            border-radius: 15px; border: 1px solid var(--border); display: flex;
+            justify-content: space-between; align-items: center; margin: 0 20px 20px 20px;
+        }
+        input[type=range] { width: 250px; accent-color: var(--accent); }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="index.html" class="btn-back">VOLVER</a>
-        <div style="font-weight:900; color:var(--accent); letter-spacing:1px;">TEST DE ESTEREOPSIS DINÁMICA</div>
-        <div style="font-size:0.8rem; color:#94a3b8;">DISTANCIA: <b>40 CM</b></div>
+        <a href="index.html" class="btn-back">← PORTAL</a>
+        <div style="font-weight:900; color:var(--accent); letter-spacing:1px; font-size: 1rem;">TITMUS TEST DIGITAL INTERACTIVO</div>
+        <div style="font-size:0.8rem; font-weight:700; background:#000; padding:5px 12px; border-radius:20px;">DISTANCIA: 40 CM</div>
     </div>
 
-    <div class="container">
-        <h2 style="margin:0; text-align:center; font-weight:700; font-size:1.2rem;">
-            ¿Cuál de los círculos se desplaza hacia adelante (FLOTA)?
-        </h2>
-
-        <div class="wirt-row">
-            <div class="circle-box" onclick="checkAnswer(1)">
-                <div class="static-stimulus"></div>
-                <span style="position:absolute; bottom:-25px; font-size:0.8rem; color:#64748b;">1</span>
+    <div class="titmus-book">
+        
+        <div class="test-section" style="grid-column: 1;">
+            <div class="section-title">1. Estereopsis Gruesa (Mosca)</div>
+            <div class="mosca-container" onclick="verifyTest('Mosca')">
+                <div class="mosca-wing wing-left" id="wing-L">🪰</div>
+                <div class="mosca-wing wing-right" id="wing-R">🪰</div>
+                <div class="mosca-body">🪰</div>
             </div>
-            <div class="circle-box" onclick="checkAnswer(2)">
-                <div class="static-stimulus"></div>
-                <span style="position:absolute; bottom:-25px; font-size:0.8rem; color:#64748b;">2</span>
-            </div>
-            <div class="circle-box" id="target-box" onclick="checkAnswer(3)">
-                <div class="target-stimulus" id="pulsing-target"></div>
-                <span style="position:absolute; bottom:-25px; font-size:0.8rem; color:#64748b;">3</span>
-            </div>
-            <div class="circle-box" onclick="checkAnswer(4)">
-                <div class="static-stimulus"></div>
-                <span style="position:absolute; bottom:-25px; font-size:0.8rem; color:#64748b;">4</span>
+            <div style="font-size: 0.75rem; color:#64748b; margin-top:10px; text-align:center;">
+                Valor Estimado: <b>~3000" a 4000" de arco</b>. Las alas deben flotar marcadamente.
             </div>
         </div>
 
-        <div class="control-panel">
-            <label style="display:block; margin-bottom:8px; font-weight:700; font-size:0.9rem;">
-                Dificultad (Velocidad): <span id="speed-val" style="color:var(--accent);">Media</span>
-            </label>
-            <input type="range" id="speed-slider" min="1" max="3" step="1" value="2" oninput="updateSpeed(this.value)">
-            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#94a3b8; margin-top:5px;">
-                <span>Gruesa (~400")</span><span>Media (~200")</span><span>Fina (~40")</span>
+        <div class="test-section" style="grid-column: 2;">
+            <div class="section-title">2. Test de los Animales (Infantil)</div>
+            <div class="animals-box">
+                <div class="animal-row">
+                    <div class="row-label">A</div>
+                    <div class="animal-list">
+                        <div class="animal-item" onclick="verifyTest('A-1')">🦘</div>
+                        <div class="animal-item" onclick="verifyTest('A-2')">
+                            <div class="animal-target" id="anim-A">🐱</div>
+                        </div>
+                        <div class="animal-item" onclick="verifyTest('A-3')">🦫</div>
+                        <div class="animal-item" onclick="verifyTest('A-4')">🐦</div>
+                    </div>
+                </div>
+                <div class="animal-row">
+                    <div class="row-label">B</div>
+                    <div class="animal-list">
+                        <div class="animal-item" onclick="verifyTest('B-1')">🦒</div>
+                        <div class="animal-item" onclick="verifyTest('B-2')">🦔</div>
+                        <div class="animal-item" onclick="verifyTest('B-3')">🐘</div>
+                        <div class="animal-item" onclick="verifyTest('B-4')">
+                            <div class="animal-target" id="anim-B">🐰</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="animal-row">
+                    <div class="row-label">C</div>
+                    <div class="animal-list">
+                        <div class="animal-item" onclick="verifyTest('C-1')">
+                            <div class="animal-target" id="anim-C">🐒</div>
+                        </div>
+                        <div class="animal-item" onclick="verifyTest('C-2')">🦁</div>
+                        <div class="animal-item" onclick="verifyTest('C-3')">🐻</div>
+                        <div class="animal-item" onclick="verifyTest('C-4')">🐸</div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="test-section" style="grid-column: span 2;">
+            <div class="section-title">3. Círculos de Wirt (Agudeza Estereoscópica Fina)</div>
+            <div class="wirt-grid">
+                
+                <div class="wirt-box" onclick="verifyTest('W-1')">
+                    <div class="wirt-number">N° 1</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-1"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-2')">
+                    <div class="wirt-number">N° 2</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-2"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-3')">
+                    <div class="wirt-number">N° 3</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-3"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-4')">
+                    <div class="wirt-number">N° 4</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-4"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-5')">
+                    <div class="wirt-number">N° 5</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-5"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-6')">
+                    <div class="wirt-number">N° 6</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-6"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-7')">
+                    <div class="wirt-number">N° 7</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-7"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-8')">
+                    <div class="wirt-number">N° 8</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-8"></div></div>
+                    </div>
+                </div>
+                <div class="wirt-box" onclick="verifyTest('W-9')">
+                    <div class="wirt-number">N° 9</div>
+                    <div class="wirt-circles-container">
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-target" id="wirt-9"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                        <div class="wirt-item"><div class="wirt-static"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="calibrator">
+            <div style="font-weight: 700; font-size:0.9rem;">
+                Ajuste Fisiológico Retiniano: <span id="calib-txt" style="color:var(--accent);">Estándar (Modo Clínico)</span>
+            </div>
+            <div>
+                <input type="range" id="global-speed" min="0.5" max="4.5" step="0.5" value="2.5" oninput="changeGlobalSpeed(this.value)">
+            </div>
+        </div>
+
     </div>
 
     <script>
-        let posX = 0;
+        let baseDelta = 0;
         let direction = 1;
-        let currentSpeed = 3; // Píxeles por frame de movimiento
-        const target = document.getElementById('pulsing-target');
+        let globalSpeedMultiplier = 2.5;
 
-        // Motor de animación de alta precisión (Pendular horizontal)
-        function animate() {
-            // Límites de oscilación lateral (amplitud de 18 píxeles)
-            posX += currentSpeed * direction;
-            if (posX > 18 || posX < -18) {
-                direction *= -1; 
-            }
-            target.style.transform = `translateX(${posX}px)`;
-            requestAnimationFrame(animate);
+        // Elementos del DOM guardados para optimización
+        const wingL = document.getElementById('wing-L');
+        const wingR = document.getElementById('wing-R');
+        const animA = document.getElementById('anim-A');
+        const animB = document.getElementById('anim-B');
+        const animC = document.getElementById('anim-C');
+
+        // Referencias de los 9 círculos de Wirt
+        const wirtTargets = [];
+        for(let i=1; i<=9; i++) {
+            wirtTargets.push(document.getElementById(`wirt-${i}`));
         }
 
-        function updateSpeed(val) {
-            const txt = document.getElementById('speed-val');
-            if (val == 1) {
-                txt.innerText = "Gruesa (Movimiento Rápido)";
-                txt.style.color = "#f87171";
-                currentSpeed = 5; // Más rápido = Mayor disparidad temporal (Fácil)
-            } else if (val == 2) {
-                txt.innerText = "Media (Movimiento Moderado)";
-                txt.style.color = "var(--accent)";
-                currentSpeed = 3;
-            } else {
-                txt.innerText = "Fina (Movimiento Casi Imperceptible)";
+        // Motor principal de animación síncrona
+        function runTestAnimation() {
+            baseDelta += 0.8 * direction;
+            if (baseDelta > 15 || baseDelta < -15) {
+                direction *= -1;
+            }
+
+            // 1. Animación de la Mosca (Paralaje cruzado en las alas para efecto relieve)
+            let wingMove = baseDelta * (globalSpeedMultiplier * 0.4);
+            wingL.style.transform = `translateX(${wingMove}px) rotate(${-wingMove*0.5}deg)`;
+            wingR.style.transform = `translateX(${-wingMove}px) rotate(${wingMove*0.5}deg)`;
+
+            // 2. Animación de los Animales (Oscilación pendular lateral amplia)
+            let animalMove = baseDelta * (globalSpeedMultiplier * 0.6);
+            if(animA) animA.style.transform = `translateX(${animalMove}px)`;
+            if(animB) animB.style.transform = `translateX(${-animalMove}px)`; // Dirección inversa
+            if(animC) animC.style.transform = `translateX(${animalMove}px)`;
+
+            // 3. Animación de la Cuadrícula de Wirt (Micro-oscilaciones con degradación según escala clínica)
+            wirtTargets.forEach((target, index) => {
+                if(target) {
+                    // Cada nivel reduce de forma logarítmica la velocidad para simular la agudeza fina
+                    let levelFactor = 1 / (index + 1); 
+                    let wirtMove = baseDelta * (globalSpeedMultiplier * 0.3) * levelFactor;
+                    target.style.transform = `translateX(${wirtMove}px)`;
+                }
+            });
+
+            requestAnimationFrame(runTestAnimation);
+        }
+
+        function changeGlobalSpeed(val) {
+            globalSpeedMultiplier = parseFloat(val);
+            const txt = document.getElementById('calib-txt');
+            if(val <= 1.5) {
+                txt.innerText = "Exigencia Fina (Poca Luz / Alta Agudeza)";
                 txt.style.color = "#4ade80";
-                currentSpeed = 1; // Más lento = Menor disparidad temporal (Difícil)
-            }
-        }
-
-        function checkAnswer(num) {
-            if(num === 3) {
-                alert("¡Excelente! Estereofusión confirmada. El círculo 3 flota en el plano Z.");
+            } else if (val <= 3) {
+                txt.innerText = "Estándar (Modo Clínico)";
+                txt.style.color = "var(--accent)";
             } else {
-                alert("Incorrecto. Intente nuevamente enfocando el centro de la fila.");
+                txt.innerText = "Estímulo Grueso (Ideal Estrabismo / Niños)";
+                txt.style.color = "#f87171";
             }
         }
 
-        // Iniciar la animación al cargar la página
-        animate();
+        function verifyTest(sectionName) {
+            console.log(`Evaluando interacción en: ${sectionName}`);
+            // Feedback clínico rápido para control del tecnólogo en consulta
+        }
+
+        // Encender el motor clínico al cargar
+        runTestAnimation();
     </script>
 </body>
 </html>
